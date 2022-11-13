@@ -7,18 +7,20 @@ import SettingsButton from "../components/settings_button";
 export default function Home() {
     return (
         <div
-            className="bg-dark1 h-screen grid gap-6 p-6"
-            style={{
-                gridTemplateAreas: `'a b b b b c' 'd b b b b c' 'd b b b b c' 'd b b b b c' 
-                'd b b b b c' 'd b b b b c' 'd b b b b c' 'd b b b b c' 'd b b b b c' 'd b b b b c' 
-                'd b b b b c' 'd b b b b c' 'e b b b b c' 'e b b b b c'`,
-            }}
+            className="bg-dark1 h-screen gap-6 p-6 flex justify-between"
+            // style={{
+            //     gridTemplateAreas: `'a b b b b c' 'd b b b b c' 'd b b b b c' 'd b b b b c'
+            //     'd b b b b c' 'd b b b b c' 'd b b b b c' 'd b b b b c' 'd b b b b c' 'd b b b b c'
+            //     'd b b b b c' 'd b b b b c' 'e b b b b c' 'e b b b b c'`,
+            // }}
         >
-            <Search />
+            <div className="flex flex-col justify-between gap-6">
+                <Search />
+                <Friends />
+                <SettingsButton />
+            </div>
             <MainWindow name="Nash Solon" />
-            <Friends />
             <InfoPanel />
-            <SettingsButton />
         </div>
     );
 }

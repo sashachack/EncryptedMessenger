@@ -3,8 +3,8 @@ import { faGear } from "@fortawesome/free-solid-svg-icons";
 
 export default function SettingsButton() {
     return (
-        <div className="bg-primary flex items-center justify-start p-2 pl-4 rounded-lg e">
-            <FontAwesomeIcon icon={faGear} className="mr-2" />
+        <div className="bg-bg2 flex items-center justify-start p-3 rounded-lg">
+            <FontAwesomeIcon icon={faGear} className="text-2xl mr-2" />
             <p>Settings</p>
         </div>
     );
