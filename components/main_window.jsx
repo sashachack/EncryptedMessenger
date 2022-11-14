@@ -3,16 +3,44 @@ import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 
-export default function MainWindow({ name }) {
+const Message = ({ message }) => {
+    const { text, fromMe } = message;
+    return (
+        <div
+            className={`p-2 rounded-xl ${
+                fromMe
+                    ? "bg-send-blue self-end rounded-tr-[0px]"
+                    : "bg-soft-red self-start rounded-tl-[0px]"
+            } `}
+        >
+            {text}
+        </div>
+    );
+};
+
+const Messages = ({ messages }) => {
+    return (
+        <div className="flex flex-col w-full h-full py-4 gap-4 justify-end">
+            {messages.map((message) => (
+                <Message key={message.id} message={message} />
+            ))}
+        </div>
+    );
+};
+
+export default function MainWindow({ convos, selectedFriendID }) {
     const [message, setMessage] = useState("");
 
     return (
         <div className="flex-grow bg-bg2 flex items-center p-4 px-5 rounded-lg flex-col justify-between">
             <div className="w-full flex justify-between items-center">
-                <p className="text-2xl font-bold">{name}</p>
+                <p className="text-2xl font-bold">
+                    {convos[selectedFriendID].name}
+                </p>
+                {/* /* <--- won't work later  */}
                 <FontAwesomeIcon icon={faLock} />
             </div>
-            <div>Hi</div>
+            <Messages messages={convos[selectedFriendID].messages} />
             <div className="flex items-center justify-between w-full">
                 <input
                     type="text"
