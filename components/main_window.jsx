@@ -32,7 +32,7 @@ export default function MainWindow({ convos, selectedFriendID }) {
     const [message, setMessage] = useState("");
 
     return (
-        <div className="flex-grow bg-bg2 flex items-center p-4 px-5 rounded-lg flex-col justify-between">
+        <div className="flex-grow bg-bg2 flex items-center p-4 pt-[0.7rem] px-5 rounded-lg flex-col justify-between">
             <div className="w-full flex justify-between items-center">
                 <p className="text-2xl font-bold">
                     {convos[selectedFriendID].name}
