@@ -5,6 +5,7 @@ import Search from "../components/search";
 import SettingsButton from "../components/settings_button";
 import Login from "../components/login";
 import SignUp from "../components/sign_up";
+import Popup from "../components/popup"
 import { useState } from "react";
 import { friends } from "../constants/friends";
 import { convos } from "../constants/convos";
@@ -12,6 +13,7 @@ import { convos } from "../constants/convos";
 export default function Home() {
     const [selectedFriendID, setSelectedFriendID] = useState(0);
     const [login, setLogin] = useState(true);
+    const [success, setSucc] = useState(false);
     return (
         <div
             className="bg-dark1 h-screen gap-6 p-6 flex justify-between"
@@ -39,8 +41,10 @@ export default function Home() {
                 } `}
                 >
             </div> */}
-            {login && <Login setLogin = {setLogin}/>}
-            {!login && <SignUp setLogin = {setLogin}/>}
+            {/* {login && <Login setLogin = {setLogin}/>}
+            {!login && <SignUp setLogin = {setLogin}/>} */}
+            {!success && <Popup login={login} setLogin={setLogin} setSucc={setSucc}/>}
+
             <InfoPanel />
         </div>
     );

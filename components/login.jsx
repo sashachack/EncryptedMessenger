@@ -1,7 +1,7 @@
 import { useState } from "react";
 // import {SignUp} from "./sign_up";
 
-export default function Login({setLogin}) {
+export default function Login({setLogin, setSucc}) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -24,7 +24,8 @@ export default function Login({setLogin}) {
                     className="bg-bg2 p-2 px-3 rounded-full text-text-grey2 focus:border-transparent 
                         placeholder-text-grey focus:outline-none"
                 ></input>
-                <button className="text-xl font-bold text-white p-2 rounded-lg">
+                <button className="text-xl font-bold text-white p-2 rounded-lg"
+                onClick={(e)=> setSucc(true)}>
                     Login
                 </button>
                 <p className="font text-text-grey2">
