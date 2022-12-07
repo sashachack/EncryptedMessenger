@@ -34,10 +34,17 @@ export default function MainWindow({ convos, selectedFriendID }) {
     const socket = useContext(SocketContext);
 
     const sendMessage = (e) => {
-        console.log(e);
+        // console.log(e);
+        console.log("Send message: " + message);
         // e.preventDefault();
-        console.log("Send");
-        socket.emit("send_message", { message: message });
+        // console.log("Send");
+        // socket.emit("send_message", { message: message });
+        const data = {
+            message: message,
+            sent_id: socket.id,
+            fromMe: true,
+        };
+        socket.emit("send_message", { data: data });
     };
 
     return (
@@ -56,6 +63,7 @@ export default function MainWindow({ convos, selectedFriendID }) {
                     value={message}
                     placeholder="Type something..."
                     onChange={(e) => setMessage(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                     className="flex-grow bg-bg3 p-2 px-3 rounded-full mr-3 text-text-grey2 focus:border-transparent 
                         placeholder-text-grey focus:outline-none"
                 ></input>
@@ -66,14 +74,7 @@ export default function MainWindow({ convos, selectedFriendID }) {
                     <FontAwesomeIcon
                         icon={faPaperPlane}
                         className="translate-x-[-1px]"
-                        onClick={() => {
-                            const data = {
-                                message: message,
-                                sent_id: socket.id,
-                                fromMe: true,
-                            };
-                            socket.emit("send_message", { data: data });
-                        }}
+                        onClick={sendMessage}
                     />
                 </div>
             </div>
