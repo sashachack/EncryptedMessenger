@@ -1,7 +1,8 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import SocketContext from "../context/SocketContext";
 
 const Message = ({ message }) => {
     const { text, fromMe } = message;
@@ -28,15 +29,16 @@ const Messages = ({ messages }) => {
     );
 };
 
-export default function MainWindow({ convos, selectedFriendID, socket }) {
+export default function MainWindow({ convos, selectedFriendID }) {
     const [message, setMessage] = useState("");
-    
+    const socket = useContext(SocketContext);
+
     const sendMessage = (e) => {
-        console.log(e)
+        console.log(e);
         // e.preventDefault();
-        console.log("Send")
-        socket.emit('send_message', {'message': message})
-    }
+        console.log("Send");
+        socket.emit("send_message", { message: message });
+    };
 
     return (
         <div className="flex-grow bg-bg2 flex items-center p-4 pt-[0.7rem] px-5 rounded-lg flex-col justify-between">
@@ -64,13 +66,13 @@ export default function MainWindow({ convos, selectedFriendID, socket }) {
                     <FontAwesomeIcon
                         icon={faPaperPlane}
                         className="translate-x-[-1px]"
-                        onClick={() =>{
+                        onClick={() => {
                             const data = {
-                                'message' : message,
-                                'sent_id' : socket.id,
-                                'fromMe' : true
-                            }
-                            socket.emit('send_message', {'data': data})
+                                message: message,
+                                sent_id: socket.id,
+                                fromMe: true,
+                            };
+                            socket.emit("send_message", { data: data });
                         }}
                     />
                 </div>
