@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { useEffect } from "react";
 
 function Friend({ friend, setSelectedID, curr }) {
     // const c = ` ${
@@ -29,6 +30,20 @@ export default function Friends({ friends, selectedID, setSelectedID }) {
     //     "Carson Brown",
     //     "Michael Schlaurbaum",
     // ];
+    useEffect(() => {
+        getFriends().then(res =>{
+            console.log(res)
+        })
+        .catch(err => console.log(err));
+    },[])
+
+    const getFriends = async () =>{
+        const res = await fetch('http://localhost:4000/express_backend')
+        const body = res.json();
+        console.log(body)
+        return body
+    }
+
     return (
         <div className="flex-grow bg-bg2 flex flex-col items-center justify-start rounded-lg w-[250px]">
             {friends.map((friend) => (

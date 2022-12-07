@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Message = ({ message }) => {
     const { text, fromMe } = message;
@@ -28,8 +28,15 @@ const Messages = ({ messages }) => {
     );
 };
 
-export default function MainWindow({ convos, selectedFriendID }) {
+export default function MainWindow({ convos, selectedFriendID, socket }) {
     const [message, setMessage] = useState("");
+    
+    const sendMessage = (e) => {
+        console.log(e)
+        // e.preventDefault();
+        console.log("Send")
+        socket.emit('send_message', {'message': message})
+    }
 
     return (
         <div className="flex-grow bg-bg2 flex items-center p-4 pt-[0.7rem] px-5 rounded-lg flex-col justify-between">
@@ -57,6 +64,14 @@ export default function MainWindow({ convos, selectedFriendID }) {
                     <FontAwesomeIcon
                         icon={faPaperPlane}
                         className="translate-x-[-1px]"
+                        onClick={() =>{
+                            const data = {
+                                'message' : message,
+                                'sent_id' : socket.id,
+                                'fromMe' : true
+                            }
+                            socket.emit('send_message', {'data': data})
+                        }}
                     />
                 </div>
             </div>
