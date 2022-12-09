@@ -16,6 +16,15 @@ export default function Home() {
     const [login, setLogin] = useState(true);
     const [success, setSucc] = useState(false);
 
+    const [userData, setUserData] = useState({
+        token: undefined,
+        user: undefined,
+        firstName: undefined,
+        lastName: undefined,
+        email: undefined,
+        password: undefined
+    })
+
     return (
         <div className="bg-dark1 h-screen gap-6 p-6 flex justify-between">
             <div className="flex flex-col justify-between gap-6">

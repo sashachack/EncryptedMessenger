@@ -5,9 +5,6 @@ const PORT = 4000;
 const http = require('http').createServer(app);
 const cors = require('cors');
 
-app.use(cors());
-app.use(express.json());
-
 let users = []
 
 http.listen(PORT, () => {
@@ -36,6 +33,33 @@ socketIO.on('connection', (socket) => {
     });
 });
 
-app.get('/express_backend', (req, res) => { //Line 9
-  res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' }); //Line 10
+// app.get('/express_backend', (req, res) => { //Line 9
+//   res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' }); //Line 10
+// });
+
+const mongoose = require('mongoose');
+mongodb = require('mongodb');
+require("dotenv").config();
+
+app.listen(5001, () => console.log(`Server running on port: ${5001}`));
+
+app.use(cors());
+app.use(express.json());
+app.set("view engine", "ejs")
+
+//set up mongoose 
+mongoose.connect(
+  process.env.MONGODB_URI, 
+  {
+    useNewUrlParser: true, 
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false
+}, 
+(err) => {
+  if (err) throw err;
+  console.log("MongoDB connection established");
 });
+
+//set up routes (middleware) once you make a post request to users
+app.use("/users", require("./api/userRoutes"));
