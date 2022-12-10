@@ -9,12 +9,17 @@ require('dotenv').config();
 
 // sign up new user
 router.post("/signup", async (req, res) => {
-  console.log("IN SIGN UP")
   try{
     let {first, last, username, email, password} = req.body;
-
+    console.log(username)
     if(!first || !last || !username ||!email || !password){
       return res.status(400).json({msg: "Not all fields have been entered."});
+    }
+
+    const user = await User.findOne({username : username});
+
+    if(user != null) {
+      return res.status(400).json({msg: "This username is already taken. Please select a different one!"});
     }
 
     const salt = await bcrypt.genSalt();
@@ -25,7 +30,7 @@ router.post("/signup", async (req, res) => {
       last,
       username,
       email,
-      password: passHash
+      password: passHash,
     });
     const savedUser = await newUser.save();
     res.json(savedUser);
@@ -38,14 +43,13 @@ router.post("/signup", async (req, res) => {
 //login existing user
 router.post("/login", async (req, res) => {
   try{
-    console.log("IN LOGIN IN")
-    const{username, password} = req.body;
+    const {username, password} = req.body;
     if(!username || !password){
       return res.status(400).json({msg: "Not all fields have been entered."});
     }
     const user = await User.findOne({username : username});
     if(!user){
-      return res.status(400).json({msg: "Not account with this username has been registered."});
+      return res.status(400).json({msg: "No account with this username has been registered."});
     }
     const passMatch = await bcrypt.compare(password, user.password);
     if(!passMatch){
@@ -60,12 +64,47 @@ router.post("/login", async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         password: user.password,
-        email: user.email
+        email: user.email,
+        friends: user.friends,
+        blocked: user.blocked
       }
     })
   } catch(err){
     res.status(500).json({error: err.message});
   }
 });
+
+// get friends of logged in user
+router.post("/get_friends", async (req, res) => {
+  try{
+    const {username} = req.body
+    const user = await User.findOne({username : username});
+    res.json(user.friends)
+
+  } catch(err){
+    res.status(500).json({error: err.message});
+  }
+})
+
+router.post("/all_users", async (req, res) => {
+  try{
+    console.log("IN ALL USERS")
+    const {first, last} = req.body
+    User.find({}, function(error, found) {
+      console.log(found.length);
+      // Log any errors if the server encounters one
+      if (error) {
+        console.log(error);
+      }
+      // Otherwise, send the result of this query to the browser
+      else {
+        console.log(found)
+        res.json(found);
+      }
+    });
+  } catch(err) {
+    res.status(500).json({error: err.message});
+  }
+})
 
 module.exports = router;

@@ -5,7 +5,13 @@ const userSchema = new mongoose.Schema({
   last: {type: String, required: true},
   email: {type: String, required: true},
   username: {type: String, required: true},
-  password: {type: String, require: true, minlength: 5}
+  password: {type: String, require: true, minlength: 5},
+  friends: [{
+    username: String
+  }],
+  blocked: [{
+    username: String
+  }],
 });
 //search, save, delete users from database
 module.exports = User = mongoose.model('User', userSchema);

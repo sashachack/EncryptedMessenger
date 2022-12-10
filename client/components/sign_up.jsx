@@ -12,6 +12,7 @@ export default function SignUp({ setLogin, setSucc }, props) {
     const [first, setFirst] = useState("");
     const [last, setLast] = useState("");
     // const {setUserData} = useContext(UserContext);
+    // const history = useHistory();
 
     const submit = async (e) => { 
         e.preventDefault();
@@ -21,7 +22,6 @@ export default function SignUp({ setLogin, setSucc }, props) {
         try {
             const signUp = await axios.post("http://localhost:5001/users/signup", newUser)
             const loginResponse = await axios.post("http://localhost:5001/users/login", {username, password});
-            console.log(loginResponse)
 
             // setUserData({ 
             //     token: loginResponse.data.token,
@@ -35,25 +35,31 @@ export default function SignUp({ setLogin, setSucc }, props) {
             localStorage.setItem("auth-token", loginResponse.data.token);
             localStorage.setItem("first-name", signUp.data.firstName);
             localStorage.setItem("last-name", signUp.data.lastName);
-            localStorage.setItem("email-", signUp.data.email);
-            localStorage.setItem("password-", signUp.data.password);
+            localStorage.setItem("email", signUp.data.email);
+            localStorage.setItem("password", signUp.data.password);
             localStorage.setItem("username", signUp.data.username);
+            localStorage.setItem("friends", loginResponse.data.friends);
+            localStorage.setItem("blocked", loginResponse.data.blocked);
+            // history.push("/");
     
-            console.log("done")
             setLogin(false);
+            setSucc(true);
 
         } catch (e){
-            console.log(e)
+            document.getElementById("signup-error").innerText = e.response.data.msg
         }
     }
 
     return (
         <div className = "backdrop-blur-md inset-0 h-screen absolute w-screen flex justify-center m-auto items-center">
-        <div className="gap-4 p-10 bg-bg3 rounded-lg flex flex-col justify-center items-center">
-        <div className = "h-full w-full justify-start">
-            <FontAwesomeIcon className="text-white cursor-pointer" icon={faArrowLeft}
-            onClick = {(e) => setLogin(true)}/>    
-        </div>
+            <div className="gap-4 p-10 bg-bg3 rounded-lg flex flex-col justify-center items-center">
+                <div className = "h-full w-full justify-start">
+                    <FontAwesomeIcon className="text-white cursor-pointer" icon={faArrowLeft}
+                    onClick = {(e) => setLogin(true)}/>    
+                </div>
+                <div id="signup-error">
+
+                </div>
                 <input
                     type="text"
                     value={first}
@@ -95,9 +101,7 @@ export default function SignUp({ setLogin, setSucc }, props) {
                         placeholder-text-grey focus:outline-none"
                 ></input>
                 <form onSubmit={submit}>
-                <button type='submit' className="text-xl font-bold text-white p-2 rounded-lg" onClick={(e) => {
-                        setSucc(true);
-                    }}>
+                <button type='submit' className="text-xl font-bold text-white p-2 rounded-lg" onClick={submit}>
                     Sign Up
                 </button>
                 </form>

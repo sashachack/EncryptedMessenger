@@ -1,12 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
+import axios from "axios";
 
 function Friend({ friend, setSelectedID, curr }) {
     // const c = ` ${
     //     curr ? "bg-send-blue text-black" : " hover:bg-soft-red cursor-pointer"
     // } p-5 text-left w-full rounded-lg`;
-    console.log(friend);
     const c = ` ${
         curr ? "bg-soft-red text-black" : " cursor-pointer"
     } p-5 text-left rounded-lg`;
@@ -21,7 +21,7 @@ function Friend({ friend, setSelectedID, curr }) {
     );
 }
 
-export default function Friends({ friends, selectedID, setSelectedID }) {
+export default function Friends({selectedID, setSelectedID }, props) {
     // current_friend = current_friend || "Nash Solon";
     // const friends = [
     //     "Nash Solon",
@@ -30,19 +30,35 @@ export default function Friends({ friends, selectedID, setSelectedID }) {
     //     "Carson Brown",
     //     "Michael Schlaurbaum",
     // ];
+
     useEffect(() => {
         getFriends().then(res =>{
-            console.log(res)
+            console.log("called function")
         })
         .catch(err => console.log(err));
     },[])
 
     const getFriends = async () =>{
-        const res = await fetch('http://localhost:4000/express_backend')
-        const body = res.json();
-        console.log(body)
-        return body
+        let username = localStorage.getItem("username")
+        const friendResponse = axios.post('http://localhost:5001/users/get_friends', {username})
+        console.log(friendResponse)
     }
+
+    let username = localStorage.getItem("username")
+    let friends = []
+    const friendResponse = axios.post('http://localhost:5001/users/get_friends', {username})
+    friendResponse.then(function(results) {
+        console.log(results)
+        friends = results.data
+    })
+
+    let no_friends = false
+    if(friends.length == 0) {
+        no_friends = true
+    }
+    // console.log(friendResponse)
+    // let friends = localStorage.getItem("friends");
+    console.log(friends)
 
     return (
         <div className="flex-grow bg-bg2 flex flex-col items-center justify-start rounded-lg w-[250px]">
@@ -54,6 +70,12 @@ export default function Friends({ friends, selectedID, setSelectedID }) {
                     curr={friend.id == selectedID}
                 />
             ))}
+            {no_friends && (
+                <p className="bg-soft-red text-white p-2 rounded-lg">
+                Add friends using the button below to start chatting!
+                </p>
+            )}
+            
         </div>
     );
 }
