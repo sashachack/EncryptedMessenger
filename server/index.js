@@ -7,10 +7,10 @@ const cors = require('cors');
 const { SocketAddress } = require('net');
 const { isObject } = require('util');
 
+
 app.use(cors());
 app.use(express.json());
 
-// let users = []
 
 http.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
@@ -58,24 +58,6 @@ socketIO.on('connection', (socket) => {
       
     })
 
-    // MongoClient.connect(uri, async (err, client) => {
-    //     const db = client.db("main");
-    //     let bodyObject = JSON.parse(req.body);
-    //     const body = await db.collection("messages").find({uid: bodyObject.uid}).toArray();
-
-
-    // })
-    
-    // socket.on('send_name', (message) => {
-    //             // console.log(message.name)
-    //             users.push({name: message.name, id: socket.id})
-    //             console.log(users)
-    //             socket.emit('new_user', {users: users})
-    //           })
-    // socket.on('remove_user', res =>{
-    //           console.log('hello')
-    //           console.log(res)
-    // })
     socket.on('disconnect', () => {
       // console.log(id)
       // let index = 0
@@ -92,42 +74,32 @@ socketIO.on('connection', (socket) => {
     });
 });
 
-// const { MongoClient } = require("mongodb");
-
-// let uri =
-//   'mongodb+srv://nash_user:01j6qjGrnu851R47@cluster0.3lehonp.mongodb.net/?retryWrites=true&w=majority';
-
-// const client = new MongoClient(uri);
-
-// client.connect().then(cli =>{
-//     const database = cli.db("main");
-//     app.get('/get_all_users', (req, res) =>{
-//       const coll = database.collection("users");
-//       // console.log(users)
-//       const all = coll.find({}).toArray;
-//       // await cursor.forEach(doc => console.log(doc));
-//       res.send({all: all})
-
-//     })
-
-// })
 
 
+const mongoose = require('mongoose');
+mongodb = require('mongodb');
+require("dotenv").config();
 
-//     const database = client.db("main");
-//     const coll = database.collection("users");
-//     // console.log(users)
-//     const all = coll.find({});
-//     // console.log(all)
-//     // await cursor.forEach(doc => console.log(doc));
-//     return all
-  
+app.listen(5001, () => console.log(`Server running on port: ${5001}`));
 
+app.use(cors());
+app.use(express.json());
+app.set("view engine", "ejs")
 
-// // const all = run().catch(console.dir);
+//set up mongoose 
+mongoose.connect(
+  process.env.MONGODB_URI, 
+  {
+    useNewUrlParser: true, 
+    useUnifiedTopology: true,
+    // useCreateIndex: true,
+    // useFindAndModify: false
+}, 
+(err) => {
+  if (err) throw err;
+  console.log("MongoDB connection established");
+});
 
-// app.get('/express_backend', (req, res) => { //Line 9
-//   const all = run().catch(console.dir);
-//   res.send({all: all})
-//   // res.send({ users: users }); //Line 10
-// });
+//set up routes (middleware) once you make a post request to users
+app.use("/users", require("./api/userRoutes"));
+
