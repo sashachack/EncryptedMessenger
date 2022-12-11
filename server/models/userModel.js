@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
   blocked: [{
     username: String
   }],
+  id: {type: Number, required: false}
 });
 //search, save, delete users from database
 module.exports = User = mongoose.model('User', userSchema);

@@ -18,6 +18,9 @@ router.post("/signup", async (req, res) => {
 
     const user = await User.findOne({username : username});
 
+    const uid = await User.find({}).countDocuments() + 1;
+    console.log(uid)
+
     if(user != null) {
       return res.status(400).json({msg: "This username is already taken. Please select a different one!"});
     }
@@ -31,11 +34,13 @@ router.post("/signup", async (req, res) => {
       username,
       email,
       password: passHash,
+      id: uid
     });
     const savedUser = await newUser.save();
     res.json(savedUser);
 
   } catch (err){
+    console.log(err)
     res.status(500).json({error: err.message});
   }
 });
