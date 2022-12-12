@@ -84,7 +84,7 @@ export default function Friends({selectedID, setSelectedID}) {
         const friendResponse = axios.post('http://localhost:5001/users/get_friends', {username})
         console.log(friendResponse)
       }
-    })
+  
     
 //NISHAs
 /*
@@ -105,8 +105,6 @@ export default function Friends({ selectedID, setSelectedID}, props) {
             temp_friends.push(friendResponse.data[i])
         }
         setFriends(temp_friends)
-        */
-//END NISHA's
 
         if(temp_friends.length == 0) {
             setNoFriends(true)
@@ -115,7 +113,9 @@ export default function Friends({ selectedID, setSelectedID}, props) {
             setNoFriends(false)
         }
         return temp_friends
-    }
+        */
+        //END NISHA's
+    
 
     return (
         <div className="flex-grow bg-bg2 flex flex-col items-center justify-start rounded-lg w-[250px]">
