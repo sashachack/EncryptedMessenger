@@ -93,10 +93,27 @@ router.post("/get_friends", async (req, res) => {
 
 router.post("/all_users", async (req, res) => {
   try{
-    console.log("IN ALL USERS")
     const {first, last} = req.body
     User.find({}, function(error, found) {
-      console.log(found.length);
+      // Log any errors if the server encounters one
+      if (error) {
+        console.log(error);
+      }
+      // Otherwise, send the result of this query to the browser
+      else {
+        res.json(found);
+      }
+    });
+  } catch(err) {
+    res.status(500).json({error: err.message});
+  }
+})
+
+router.post("/find_user", async (req, res) => {
+  try{
+    const {selectedUserID} = req.body
+    console.log(selectedUserID)
+    User.find({_id: selectedUserID}, function(error, found) {
       // Log any errors if the server encounters one
       if (error) {
         console.log(error);
@@ -108,6 +125,51 @@ router.post("/all_users", async (req, res) => {
       }
     });
   } catch(err) {
+    res.status(500).json({error: err.message});
+  }
+})
+
+router.post("/get_friends", async (req, res) => {
+  try{
+    const {username} = req.body
+    User.find({username: username}, function(error, found) {
+      // Log any errors if the server encounters one
+      if (error) {
+        console.log(error);
+      }
+      // Otherwise, send the result of this query to the browser
+      else {
+        console.log(found.friends)
+        res.json(found);
+      }
+    });
+  } catch(err) {
+    res.status(500).json({error: err.message});
+  }
+})
+
+router.post("/add_friend", async (req, res) => {
+  try{
+    console.log("IN ADD FRIEND")
+    const {friend_username, id, username} = req.body
+    console.log(friend_username)
+
+    const filter = { username: username };
+    const update = { $push: { friends : {username: friend_username} } };
+    console.log(update)
+
+    const user = await User.findOne({username : username});
+
+    let new_user = await User.updateOne(
+      { _id: user._id },
+      update
+   )
+
+   const final_user = await User.findOne({username : username});
+   res.json(final_user)
+
+  } catch(err) {
+    console.log(err.message)
     res.status(500).json({error: err.message});
   }
 })

@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 
 function Friend({ friend, setSelectedID, curr }) {
@@ -13,61 +14,49 @@ function Friend({ friend, setSelectedID, curr }) {
     return (
         <div
             className={c + " flex justify-start items-center w-full"}
-            onClick={() => setSelectedID(friend.id)}
+            onClick={() => setSelectedID(friend._id)}
         >
             <FontAwesomeIcon icon={faUser} className="text-2xl mr-5" />
-            <div>{friend.name}</div>
+            <div>{friend.username}</div>
         </div>
     );
 }
 
-export default function Friends({selectedID, setSelectedID }, props) {
-    // current_friend = current_friend || "Nash Solon";
-    // const friends = [
-    //     "Nash Solon",
-    //     "Nisha Sahgal",
-    //     "Kyle Montgomery",
-    //     "Carson Brown",
-    //     "Michael Schlaurbaum",
-    // ];
+export default function Friends({ selectedID, setSelectedID}, props) {
+    const [friends, setFriends] = useState([]);
+    const [no_friends, setNoFriends] = useState("");
 
     useEffect(() => {
-        getFriends().then(res =>{
-            console.log("called function")
-        })
+        getFriends()
         .catch(err => console.log(err));
-    },[])
-
-    const getFriends = async () =>{
+      },[])
+    
+      const getFriends = async () =>{
         let username = localStorage.getItem("username")
-        const friendResponse = axios.post('http://localhost:5001/users/get_friends', {username})
-        console.log(friendResponse)
-    }
+        const friendResponse = await axios.post('http://localhost:5001/users/get_friends', {username})
+        let temp_friends = []
+        for(let i = 0; i < friendResponse.data.length; i++) {
+            temp_friends.push(friendResponse.data[i])
+        }
+        setFriends(temp_friends)
 
-    let username = localStorage.getItem("username")
-    let friends = []
-    const friendResponse = axios.post('http://localhost:5001/users/get_friends', {username})
-    friendResponse.then(function(results) {
-        console.log(results)
-        friends = results.data
-    })
-
-    let no_friends = false
-    if(friends.length == 0) {
-        no_friends = true
+        if(temp_friends.length == 0) {
+            setNoFriends(true)
+        }
+        else{
+            setNoFriends(false)
+        }
+        return temp_friends
     }
-    // console.log(friendResponse)
-    // let friends = localStorage.getItem("friends");
-    console.log(friends)
 
     return (
         <div className="flex-grow bg-bg2 flex flex-col items-center justify-start rounded-lg w-[250px]">
             {friends.map((friend) => (
                 <Friend
-                    key={friend.id}
+                    key={friend._id}
                     friend={friend}
                     setSelectedID={setSelectedID}
-                    curr={friend.id == selectedID}
+                    curr={friend._id == selectedID}
                 />
             ))}
             {no_friends && (

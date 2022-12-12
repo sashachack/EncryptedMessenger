@@ -51,12 +51,12 @@ export default function MainWindow({ convos, selectedFriendID }) {
         <div className="flex-grow bg-bg2 flex items-center p-4 pt-[0.7rem] px-5 rounded-lg flex-col justify-between">
             <div className="w-full flex justify-between items-center">
                 <p className="text-2xl font-bold">
-                    {convos[selectedFriendID].name}
+                    {/* {convos[selectedFriendID].name} */}
                 </p>
                 {/* /* <--- won't work later  */}
                 <FontAwesomeIcon icon={faLock} />
             </div>
-            <Messages messages={convos[selectedFriendID].messages} />
+            {/* <Messages messages={convos[selectedFriendID].messages} /> */}
             <div className="flex items-center justify-between w-full">
                 <input
                     type="text"

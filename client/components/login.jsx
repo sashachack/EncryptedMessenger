@@ -49,8 +49,8 @@ export default function Login({ setLogin, setSucc }, props) {
             //     password: loginResponse.data.user.password
                 
             // });
-        
             localStorage.setItem("auth-token", loginResponse.data.token);
+            localStorage.setItem("id", loginResponse.data.user._id);
             localStorage.setItem("username", loginResponse.data.user.username);
             localStorage.setItem("first-name", loginResponse.data.user.firstName);
             localStorage.setItem("last-name", loginResponse.data.user.lastName);

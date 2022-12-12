@@ -40,11 +40,11 @@ export default function Home() {
                     />
                 )}
                 {/* <SettingsButton /> */}
-                <AddFriend friendModal={friendModal} setFriendModal={setFriendModal} />
+                <AddFriend friendModal={friendModal} setFriendModal={setFriendModal} selectedID={selectedFriendID} setSelectedID={setSelectedFriendID} />
             </div>
             <MainWindow convos={convos} selectedFriendID={selectedFriendID} />
             {friendModal && (
-                <FriendModal friendModal={friendModal} setFriendModal={setFriendModal}/>
+                <FriendModal friendModal={friendModal} setFriendModal={setFriendModal} selectedUserID={selectedFriendID} setSelectedUserID={setSelectedFriendID}/>
             )}
             {/* <div
                     className={`backdrop-blur-md inset-0 h-screen absolute w-screen flex justify-center m-auto items-center ${
