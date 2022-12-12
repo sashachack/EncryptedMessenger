@@ -3,6 +3,7 @@ import { useEffect, useContext } from "react";
 // import { useNavigate } from "react-router-dom";
 import SocketContext from "../context/SocketContext";
 import UserContext from "../context/UserContext";
+// import {SignUp} from "./sign_up";
 import axios from "axios";
 // import { friends } from "../constants/friends";
 
@@ -12,18 +13,21 @@ export default function Login({ setLogin, setSucc }, props) {
     // const [socket, setSocket] = useState(null);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    // const history = useNavigate();
-
     const socket = useContext(SocketContext);
+    //declare global context
+    const user = useContext(UserContext);
 
     const {setUserData} = useContext(UserContext);
 
     const submit = async (e) => {
         e.preventDefault();
         const curUser = {username, password};
+        user.setUsername(username);
         console.log(curUser)
         localStorage.setItem('username', curUser.username);
         try {
+        
+        //try to grab the id from the loginResponse and set it in the context
             const loginResponse = await axios.post("http://localhost:5001/users/login", {username, password})
             console.log(loginResponse);
             const friendResponse = await axios.post('http://localhost:5001/users/get_friends', {username})
@@ -58,6 +62,7 @@ export default function Login({ setLogin, setSucc }, props) {
             localStorage.setItem("password", loginResponse.data.user.password);
             localStorage.setItem("friends", friendResponse.data);
             localStorage.setItem("blocked", loginResponse.data.blocked);
+            user.setId(loginResponse.data.user.id);
             // history.push("/");
 
             setSucc(true);
@@ -87,7 +92,7 @@ export default function Login({ setLogin, setSucc }, props) {
     //     })
 
     //   }, [setSocket])
-
+    
     return (
         <div className="backdrop-blur-md inset-0 h-screen absolute w-screen flex justify-center m-auto items-center">
             <div className="gap-4 p-10 bg-bg3 rounded-lg flex flex-col justify-center items-center">
@@ -109,6 +114,28 @@ export default function Login({ setLogin, setSucc }, props) {
                     onChange={(e) => setPassword(e.target.value)}
                     className="bg-bg2 p-2 px-3 rounded-full text-text-grey2 focus:border-transparent 
                         placeholder-text-grey focus:outline-none"
+        //NASHS
+        //         ></input> 
+        //         <button
+        //             className="text-xl font-bold text-white p-2 rounded-lg"
+        //             onClick={(e) => {
+        //                 setSucc(true);
+        //                 //set global context
+        //                 user.setUsername(email);
+        //                 if(email == 'nashsolon'){
+        //                     console.log(email)
+        //                     user.setId(0);
+        //                 }
+        //                 else if(email == 'sasha'){
+        //                     user.setId(1);
+        //                 }
+        //                 // user.setId(1); //change once id is implemented
+        //             }}
+        //         >
+        //             Login
+        //         </button>
+        // // END NASHS
+        //NISHAS
                 ></input>
                 <form onSubmit={submit}>
                     <button
@@ -122,8 +149,9 @@ export default function Login({ setLogin, setSucc }, props) {
                     className="text-xl font-bold text-white p-2 rounded-lg"
                     onClick={(e) => {
                         setLogin(false);
-                    }}
-                >
+                        
+                    }}>
+        {/* //END NISHAS */}
                     Sign Up
                 </button>
             </div>
