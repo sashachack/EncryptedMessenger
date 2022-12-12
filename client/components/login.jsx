@@ -4,8 +4,6 @@ import { useEffect, useContext } from "react";
 import SocketContext from "../context/SocketContext";
 import UserContext from "../context/UserContext";
 // import {SignUp} from "./sign_up";
- 
-export default function Login({setLogin, setSucc}) {
 import axios from "axios";
 // import { friends } from "../constants/friends";
 
@@ -18,16 +16,13 @@ export default function Login({ setLogin, setSucc }, props) {
     const socket = useContext(SocketContext);
     //declare global context
     const user = useContext(UserContext);
-   
-    // const history = useNavigate();
-
-    const socket = useContext(SocketContext);
 
     const {setUserData} = useContext(UserContext);
 
     const submit = async (e) => {
         e.preventDefault();
         const curUser = {username, password};
+        user.setUsername(username);
         console.log(curUser)
         localStorage.setItem('username', curUser.username);
         try {
@@ -67,6 +62,7 @@ export default function Login({ setLogin, setSucc }, props) {
             localStorage.setItem("password", loginResponse.data.user.password);
             localStorage.setItem("friends", friendResponse.data);
             localStorage.setItem("blocked", loginResponse.data.blocked);
+            user.setId(loginResponse.data.user.id);
             // history.push("/");
 
             setSucc(true);
@@ -119,26 +115,26 @@ export default function Login({ setLogin, setSucc }, props) {
                     className="bg-bg2 p-2 px-3 rounded-full text-text-grey2 focus:border-transparent 
                         placeholder-text-grey focus:outline-none"
         //NASHS
-                ></input> 
-                <button
-                    className="text-xl font-bold text-white p-2 rounded-lg"
-                    onClick={(e) => {
-                        setSucc(true);
-                        //set global context
-                        user.setUsername(email);
-                        if(email == 'nashsolon'){
-                            console.log(email)
-                            user.setId(0);
-                        }
-                        else if(email == 'sasha'){
-                            user.setId(1);
-                        }
-                        // user.setId(1); //change once id is implemented
-                    }}
-                >
-                    Login
-                </button>
-        //END NASHS
+        //         ></input> 
+        //         <button
+        //             className="text-xl font-bold text-white p-2 rounded-lg"
+        //             onClick={(e) => {
+        //                 setSucc(true);
+        //                 //set global context
+        //                 user.setUsername(email);
+        //                 if(email == 'nashsolon'){
+        //                     console.log(email)
+        //                     user.setId(0);
+        //                 }
+        //                 else if(email == 'sasha'){
+        //                     user.setId(1);
+        //                 }
+        //                 // user.setId(1); //change once id is implemented
+        //             }}
+        //         >
+        //             Login
+        //         </button>
+        // // END NASHS
         //NISHAS
                 ></input>
                 <form onSubmit={submit}>
@@ -154,9 +150,8 @@ export default function Login({ setLogin, setSucc }, props) {
                     onClick={(e) => {
                         setLogin(false);
                         
-                    }}
-                >
-        //END NISHAS
+                    }}>
+        {/* //END NISHAS */}
                     Sign Up
                 </button>
             </div>

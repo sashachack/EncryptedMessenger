@@ -4,7 +4,7 @@ import clientPromise from "./mongodb";
 export default async(req, res) => {
     try{
         const client = await clientPromise;
-        const db = client.db("main");
+        const db = client.db("EncryptedMessenger");
         let bodyObject = JSON.parse(req.body);
         console.log(bodyObject)
 

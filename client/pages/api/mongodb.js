@@ -1,6 +1,9 @@
 import { MongoClient } from 'mongodb'
 
-const uri = 'mongodb+srv://nash_user:01j6qjGrnu851R47@cluster0.3lehonp.mongodb.net/?retryWrites=true&w=majority';
+
+//changed to try to connect to Nisha's database
+const uri = process.env.MONGODB_URI;
+console.log(uri)
 
 
 let client

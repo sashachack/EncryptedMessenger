@@ -3,7 +3,6 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState, useContext } from "react";
 import SocketContext from "../context/SocketContext";
 import UserContext from "../context/UserContext";
-import { useEffect } from "react";
 import axios from "axios";
 
 function Friend({ friend, setSelectedID, curr }) {
@@ -41,7 +40,7 @@ export default function Friends({selectedID, setSelectedID}) {
     const socket = useContext(SocketContext)
     //use global context
     const user = useContext(UserContext);
-export default function Friends({selectedID, setSelectedID }, props) {
+    const [no_friends, setNoFriends] = useState(true);
     // current_friend = current_friend || "Nash Solon";
     // const friends = [
     //     "Nash Solon",
@@ -70,21 +69,22 @@ export default function Friends({selectedID, setSelectedID }, props) {
             let farr = res.data
             console.log(farr)
             user.setFriends(farr)
+            if(farr.length == 0) {
+                setNoFriends(true)
+            }
+
         })
         .catch(err => console.log(err));
         
     },[user.id])
-    
-            console.log("called function")
-        })
-        .catch(err => console.log(err));
-    },[])
 
     const getFriends = async () =>{
         let username = localStorage.getItem("username")
         const friendResponse = axios.post('http://localhost:5001/users/get_friends', {username})
         console.log(friendResponse)
     }
+
+
     
     /*
     

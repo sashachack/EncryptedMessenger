@@ -64,14 +64,15 @@ router.post("/login", async (req, res) => {
     res.json({
       token,
       user: {
-        id: user._id,
+        _id: user._id,
         username: user.username,
         firstName: user.firstName,
         lastName: user.lastName,
         password: user.password,
         email: user.email,
         friends: user.friends,
-        blocked: user.blocked
+        blocked: user.blocked,
+        id: user.id
       }
     })
   } catch(err){
