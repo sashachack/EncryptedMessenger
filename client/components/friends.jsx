@@ -3,6 +3,7 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState, useContext } from "react";
 import SocketContext from "../context/SocketContext";
 import UserContext from "../context/UserContext";
+
 import axios from "axios";
 
 function Friend({ friend, setSelectedID, curr }) {
@@ -82,40 +83,59 @@ export default function Friends({selectedID, setSelectedID}) {
         let username = localStorage.getItem("username")
         const friendResponse = axios.post('http://localhost:5001/users/get_friends', {username})
         console.log(friendResponse)
-    }
-
-
-    
-    /*
-    
-
-    let username = localStorage.getItem("username")
-    let friends = []
-    const friendResponse = axios.post('http://localhost:5001/users/get_friends', {username})
-    friendResponse.then(function(results) {
-        console.log(results)
-        friends = results.data
+      }
     })
-
-    let no_friends = false
-    if(friends.length == 0) {
-        no_friends = true
-    }
-    // console.log(friendResponse)
-    // let friends = localStorage.getItem("friends");
-    console.log(friends)
     
-       */
+//NISHAs
+/*
+export default function Friends({ selectedID, setSelectedID}, props) {
+    const [friends, setFriends] = useState([]);
+    const [no_friends, setNoFriends] = useState("");
+
+    useEffect(() => {
+        getFriends()
+        .catch(err => console.log(err));
+      },[])
+    
+      const getFriends = async () =>{
+        let username = localStorage.getItem("username")
+        const friendResponse = await axios.post('http://localhost:5001/users/get_friends', {username})
+        let temp_friends = []
+        for(let i = 0; i < friendResponse.data.length; i++) {
+            temp_friends.push(friendResponse.data[i])
+        }
+        setFriends(temp_friends)
+        */
+//END NISHA's
+
+        if(temp_friends.length == 0) {
+            setNoFriends(true)
+        }
+        else{
+            setNoFriends(false)
+        }
+        return temp_friends
+    }
 
     return (
         <div className="flex-grow bg-bg2 flex flex-col items-center justify-start rounded-lg w-[250px]">
             {user.friends && user.friends.map((friend) => (
                 <Friend
+//NASHs
 
                     key={friend[0].id}
                     friend={friend}
                     setSelectedID={setSelectedID}
                     curr={friend[0].id == selectedID}
+
+//NISHA
+/*
+                    key={friend._id}
+                    friend={friend}
+                    setSelectedID={setSelectedID}
+                    curr={friend._id == selectedID}
+*/
+//END NISHA
                 />
             ))}
             {no_friends && (

@@ -122,6 +122,7 @@ export default function MainWindow({ convos, selectedFriendID }) {
                 {/* /* <--- won't work later  */}
                 <FontAwesomeIcon icon={faLock} />
             </div>
+
             <Messages messages={messages} />
             <div className="flex items-center justify-between w-full">
                 <input
