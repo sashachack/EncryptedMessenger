@@ -34,8 +34,8 @@ const Messages = ({ messages }) => {
             className="flex flex-col h-full w-full gap-4 overflow-y-scroll no-scrollbar pb-4 py-2"
         >
             {messages &&
-                messages.map((message) => (
-                    <Message key={message.id} message={message} />
+                messages.map((message, i) => (
+                    <Message key={i} message={message} />
                 ))}
         </div>
     );
@@ -66,7 +66,7 @@ export default function MainWindow({ convos, selectedFriendID }) {
             // console.log(marr)
             setMessages(marr);
         });
-    }, [user, messages]);
+    }, [user, messages]); //selectedFriendID
 
     useEffect(() => {
         const sendSocketMessage = (e) => {
@@ -120,7 +120,6 @@ export default function MainWindow({ convos, selectedFriendID }) {
             setMessage("");
         });
 
-        
         // const sendSocketMessage = (e) => {
         //     console.log("Send message: " + message);
         //     const data = {
