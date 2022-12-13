@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useEffect, useContext } from "react";
 // import { useNavigate } from "react-router-dom";
 import SocketContext from "../context/SocketContext";
+import { localServer } from "../constants/domains";
 import UserContext from "../context/UserContext";
 // import {SignUp} from "./sign_up";
 import axios from "axios";
@@ -30,12 +31,12 @@ export default function Login({ setLogin, setSucc }, props) {
         try {
             //try to grab the id from the loginResponse and set it in the context
             const loginResponse = await axios.post(
-                "http://localhost:5001/users/login",
+                `${localServer}/users/login`,
                 { username, password }
             );
             console.log(loginResponse);
             const friendResponse = await axios.post(
-                "http://localhost:5001/users/get_friends",
+                `${localServer}/users/get_friends`,
                 { username }
             );
             console.log(friendResponse);

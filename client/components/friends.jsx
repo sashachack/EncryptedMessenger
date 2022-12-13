@@ -160,7 +160,7 @@ export default function Friends({ selectedID, setSelectedID}, props) {
                     />
                 ))}
             {no_friends && (
-                <p className="bg-soft-red text-white p-2 rounded-lg">
+                <p className="text-center text-white p-2 rounded-lg">
                     Add friends using the button below to start chatting!
                 </p>
             )}
