@@ -3,9 +3,11 @@ import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState, useContext } from "react";
 import SocketContext from "../context/SocketContext";
+import UserContext from "../context/UserContext";
 
 const Message = ({ message }) => {
     const { text, fromMe } = message;
+
     return (
         <div
             className={`p-2 rounded-xl ${
@@ -21,51 +23,115 @@ const Message = ({ message }) => {
 
 const Messages = ({ messages }) => {
     return (
-        <div className="flex flex-col w-full h-full py-4 gap-4 justify-end">
-            {messages.map((message) => (
-                <Message key={message.id} message={message} />
-            ))}
+        <div className="overflow-scroll flex flex-col w-full h-full py-4 gap-4 justify-end">
+            {messages &&
+                messages.map((message) => (
+                    <Message key={message.id} message={message} />
+                ))}
         </div>
     );
 };
 
 export default function MainWindow({ convos, selectedFriendID }) {
     const [message, setMessage] = useState("");
+    const [messages, setMessages] = useState(null);
     const socket = useContext(SocketContext);
+    const user = useContext(UserContext);
 
-    const sendMessage = (e) => {
-        // console.log(e);
-        console.log("Send message: " + message);
-        // e.preventDefault();
-        // console.log("Send");
-        // socket.emit("send_message", { message: message });
-        const data = {
-            message: message,
-            sent_id: socket.id,
-            fromMe: true,
+    useEffect(() => {
+        const grabMessages = async (e) => {
+            //let data = {uid: user.id, ouid: selectedFriendID}
+            let data = { uid: user.id, ouid: selectedFriendID };
+            const res = await fetch("/api/get_messages", {
+                method: "POST",
+                body: JSON.stringify(data),
+            });
+            const body = res.json();
+            // console.log(body)
+            return body;
         };
-        socket.emit("send_message", { data: data });
+
+        grabMessages().then((res) => {
+            console.log(res.data);
+            let marr = res.data;
+            // console.log(marr)
+            setMessages(marr);
+        });
+    }, [user]);
+
+    useEffect(() => {
+        socket.on("receive_message", (data) => {
+            console.log(data);
+
+            setMessages((messages) => [...messages, data]);
+            console.log(messages);
+        });
+    }, []);
+
+    let send = () => {
+        const sendDBMessage = async (e) => {
+            let data = {
+                uid: user.id,
+                ouid: selectedFriendID,
+                message: message,
+            };
+            const res = await fetch("/api/send_message", {
+                method: "POST",
+                body: JSON.stringify(data),
+            });
+            const body = res.json();
+            console.log(body);
+            return body;
+        };
+
+        sendDBMessage().then((res) => {
+            console.log(res);
+            console.log(res.data);
+            let marr = res.data;
+            console.log(marr);
+            setMessages(marr);
+            setMessage("");
+        });
+
+        const sendSocketMessage = (e) => {
+            console.log("Send message: " + message);
+            const data = {
+                message: message,
+                uid: user.id,
+                ouid: selectedFriendID,
+                fromMe: true,
+            };
+            socket.emit("send_message", { data: data });
+        };
+
+        sendSocketMessage();
     };
 
     return (
         <div className="flex-grow bg-bg2 flex items-center p-4 pt-[0.7rem] px-5 rounded-lg flex-col justify-between">
             <div className="w-full flex justify-between items-center">
                 <p className="text-2xl font-bold">
-                    {convos[selectedFriendID].name}
+                    {user.friends &&
+                        user.friends.map((friend) => {
+                            friend = friend[0];
+                            if (friend.id == selectedFriendID) {
+                                return friend.username;
+                            }
+                        })}
                 </p>
                 {/* /* <--- won't work later  */}
                 <FontAwesomeIcon icon={faLock} />
             </div>
-            <Messages messages={convos[selectedFriendID].messages} />
+
+            <Messages messages={messages} />
             <div className="flex items-center justify-between w-full">
                 <input
                     type="text"
                     value={message}
                     placeholder="Type something..."
                     onChange={(e) => setMessage(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                    className="flex-grow bg-bg3 p-2 px-[1rem] rounded-full mr-3 text-text-grey2 focus:border-transparent 
-                        placeholder-text-grey focus:outline-none"
+                    className="flex-grow bg-bg3 p-2 px-[1rem] rounded-full mr-3 text-text-grey2 focus:border-transparent placeholder-text-grey focus:outline-none"
+                    onKeyDown={(e) => e.key === "Enter" && send()}
                 ></input>
                 <div
                     className="bg-send-blue rounded-full p-[1.2rem] w-[30px] h-[30px] flex items-center justify-center
@@ -74,7 +140,7 @@ export default function MainWindow({ convos, selectedFriendID }) {
                     <FontAwesomeIcon
                         icon={faPaperPlane}
                         className="translate-x-[-1px]"
-                        onClick={sendMessage}
+                        onClick={send}
                     />
                 </div>
             </div>

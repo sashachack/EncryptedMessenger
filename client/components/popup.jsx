@@ -6,7 +6,7 @@ export default function Popup({login, setLogin, setSucc, socket}) {
     return(
         <div>
             {login && <Login setLogin = {setLogin} setSucc={setSucc} socket = {socket}/>}
-            {!login && <SignUp setLogin = {setLogin}/>}
+            {!login && <SignUp setLogin = {setLogin} setSucc={setSucc}/>}
         </div>
 
     )
