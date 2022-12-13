@@ -38,6 +38,15 @@ router.post("/signup", async (req, res) => {
       id: uid
     });
     const savedUser = await newUser.save();
+
+    const convos = []
+    const newMessages = new Messages({
+      uid: uid,
+      convos: convos
+    })
+    
+    newMessages.save()
+
     res.json(savedUser);
 
   } catch (err){
