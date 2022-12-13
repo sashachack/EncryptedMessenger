@@ -4,12 +4,12 @@ import clientPromise from "./mongodb";
 
 export default async(req, res) => {
     try{
-    const client = await clientPromise;
-    const db = client.db("EncryptedMessenger");
-    let bodyObject = (JSON.parse(req.body))
-    // let bodyObject = JSON.parse(req.body);
-    console.log(bodyObject)
-    console.log(bodyObject.id)
+        const client = await clientPromise;
+        const db = client.db("EncryptedMessenger");
+        let bodyObject = (JSON.parse(req.body))
+        // let bodyObject = JSON.parse(req.body);
+        console.log(bodyObject)
+        console.log(bodyObject.id)
 
   
     
@@ -27,9 +27,7 @@ export default async(req, res) => {
         for(let i = 0; i < fids.length; i++){
             arr.push(await db.collection("users").find({id: fids[i]}).toArray())
         }
-    // console.log(arr)
         
-
         res.json({ status: 200, data: arr });
     }
     catch(e){
