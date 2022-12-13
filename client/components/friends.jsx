@@ -69,19 +69,22 @@ export default function Friends({ selectedID, setSelectedID, query }) {
                 user.setFriends(farr);
                 if (farr.length == 0) {
                     setNoFriends(true);
+                } else {
+                    setNoFriends(false);
+                    setSelectedID(farr[0][0].id);
                 }
             })
             .catch((err) => console.log(err));
     }, [user.id]);
 
-    const getFriends = async () => {
-        let username = localStorage.getItem("username");
-        const friendResponse = axios.post(
-            "http://localhost:5001/users/get_friends",
-            { username }
-        );
-        console.log(friendResponse);
-    };
+    // const getFriends = async () => {
+    //     let username = localStorage.getItem("username");
+    //     const friendResponse = axios.post(
+    //         "http://localhost:5001/users/get_friends",
+    //         { username }
+    //     );
+    //     console.log(friendResponse);
+    // };
 
     //NISHAs
     /*
