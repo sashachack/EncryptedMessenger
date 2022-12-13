@@ -1,26 +1,9 @@
-This is our project for an Encrypted Messenger.
+# Encrypted Messenger
 
-** Database structure:
-- Users
-    - {id, username, password, friends: []}
-    - ex. {id: 0, username: "sashachack", password: "SDKLafasf2g0", friends: [1, 2, 3]}
-- Messages
-    - {uid, convos: 
-        [
-            {ouid, messages: [ {text: "SDLI77", fromMe: T/F, timestamp: ""}, ... ]}
-        ]
-      }
+Sasha Chackalackal (475454), Nash Solon (477477), Nisha Sahgal ()
 
-Setup my testing database
-- Connected to next.js api routes for users/friends
-    - If we have a userid, we can grab their friends
-- What to do for messages?
-    - Socketio emits message to user, should we also establish a connection in the server to save messages?
-- User context setup
-    - Username/id on login is now stored in a UserContext
-- User grabs friends from MongoDB and displays on side
-- Messages are now displayed in main window given the proper data structure in MongoDB
+Full Writeup: https://docs.google.com/document/d/18Li7F0x1O2Ma4YN1CArGzslTvCvX7SwXIZuyzD2mMGc/edit?usp=sharing
 
-- Messages now sending using socket and stored in MongoDB. But user needs to click on friend to do this.
+## Setup Instructions
 
-    
+To run this project, begin by cloning the repository.
