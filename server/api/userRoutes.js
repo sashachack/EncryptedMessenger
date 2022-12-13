@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const mongoose = require('mongoose');
 const User = require("../models/userModel");
+const Messages = require("../models/messagesModel");
 const auth = require("../middleware/auth");
 
 require('dotenv').config();
@@ -152,11 +153,11 @@ router.post("/get_friends", async (req, res) => {
 router.post("/add_friend", async (req, res) => {
   try{
     console.log("IN ADD FRIEND")
-    const {friend_username, id, username} = req.body
+    const {friend_username, uid, ouid, username} = req.body
     console.log(friend_username)
 
     const filter = { username: username };
-    const update = { $push: { friends : {username: friend_username} } };
+    const update = { $push: { friends : {username: friend_username, id:ouid} } };
     console.log(update)
 
     const user = await User.findOne({username : username});
@@ -167,6 +168,18 @@ router.post("/add_friend", async (req, res) => {
    )
 
    const final_user = await User.findOne({username : username});
+
+   const messages = []
+
+   const update_convos = { $push: { convos : {ouid: ouid, messages: messages} } };
+
+    let new_message = await Messages.updateOne(
+        {uid: uid},
+        update_convos
+    )
+
+   
+
    res.json(final_user)
 
   } catch(err) {

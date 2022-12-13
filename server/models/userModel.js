@@ -7,7 +7,8 @@ const userSchema = new mongoose.Schema({
   username: {type: String, required: true},
   password: {type: String, require: true, minlength: 5},
   friends: [{
-    username: String
+    username: String,
+    id: Number
   }],
   blocked: [{
     username: String

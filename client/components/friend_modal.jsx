@@ -5,6 +5,8 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { friends } from "../constants/friends";
+import { useContext } from "react";
+import UserContext from "../context/UserContext";
 
 function User({ user, setSelectedUserID, curr }) {
   const curUser = localStorage.getItem('username')
@@ -31,6 +33,7 @@ export default function FriendModal({friendModal, setFriendModal, selectedUserID
   const [current_friends, setCurrentFriends] = useState([]);
   const [no_new_friends, setNoNewFriends] = useState([]);
   const [friend_options, setfriendOptions] = useState([]);
+  const user = useContext(UserContext);
 
   useEffect(() => {
     // getUsers().catch(err => console.log(err));
@@ -47,6 +50,7 @@ export default function FriendModal({friendModal, setFriendModal, selectedUserID
     for(let i = 0; i < getUsers.data.length; i++) {
       if(!(current_friends.includes(getUsers.data[i].username)) && getUsers.data[i].username != username) {
         temp_options.push(getUsers.data[i])
+        console.log(getUsers.data[i])
       }
     }
 
@@ -73,14 +77,18 @@ export default function FriendModal({friendModal, setFriendModal, selectedUserID
 
   const submit = async (e) => {
     e.preventDefault();
-    const id = localStorage.getItem('id')
+
+    // const id = localStorage.getItem('id')
+   
     const username = localStorage.getItem('username')
     const new_friend = await axios.post('http://localhost:5001/users/find_user', {selectedUserID})
+    const ouid = new_friend.data[0].id
+    const uid = user.id
     const friend_username = new_friend.data[0].username
     if(current_friends.includes(friend_username)){
       document.getElementById("friend-error").innerText = "You have already added this user as a friend!"
     }
-    const add_friend = await axios.post('http://localhost:5001/users/add_friend', {friend_username, id, username})
+    const add_friend = await axios.post('http://localhost:5001/users/add_friend', {friend_username, uid,  ouid, username})
   }
 
   return (
