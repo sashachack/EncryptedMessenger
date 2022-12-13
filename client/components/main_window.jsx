@@ -4,19 +4,23 @@ import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState, useContext, useRef } from "react";
 import SocketContext from "../context/SocketContext";
 import UserContext from "../context/UserContext";
+import { encrypt, decrypt } from "../functions/encryption";
 
 const Message = ({ message }) => {
     const { text, fromMe } = message;
+    const d = decrypt(text, null);
+    console.log("decrypted:");
+    console.log(d);
 
     return (
         <div
-            className={`p-2 rounded-xl ${
+            className={`max-w-[600px] break-words p-2 rounded-xl ${
                 fromMe
                     ? "bg-send-blue self-end rounded-tr-[0px]"
                     : "bg-soft-red self-start rounded-tl-[0px]"
             } `}
         >
-            {text}
+            {"h"}
         </div>
     );
 };
@@ -28,6 +32,7 @@ const Messages = ({ messages }) => {
     //     const container = ref.current;
     //     container.scrollTop = container.scrollHeight;
     // }, [ref]);
+
     return (
         <div
             // ref={ref}
@@ -66,13 +71,15 @@ export default function MainWindow({ convos, selectedFriendID }) {
             // console.log(marr)
             setMessages(marr);
         });
-    }, [user, messages]); //selectedFriendID
+    }, [user]); //selectedFriendID
 
     useEffect(() => {
         const sendSocketMessage = (e) => {
             console.log("Send message: " + message);
+            const enc = encrypt(message, "12345");
+            console.log("Encrypted message: " + enc);
             const data = {
-                message: message,
+                message: enc,
                 uid: user.id,
                 ouid: selectedFriendID,
                 fromMe: true,
@@ -97,10 +104,13 @@ export default function MainWindow({ convos, selectedFriendID }) {
             return;
         }
         const sendDBMessage = async (e) => {
+            const enc = encrypt(message, "12345");
+            console.log("Encrypted message: " + enc);
+
             let data = {
                 uid: user.id,
                 ouid: selectedFriendID,
-                message: message,
+                message: enc,
             };
             const res = await fetch("/api/send_message", {
                 method: "POST",
