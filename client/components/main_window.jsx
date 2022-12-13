@@ -66,7 +66,22 @@ export default function MainWindow({ convos, selectedFriendID }) {
             // console.log(marr)
             setMessages(marr);
         });
-    }, [user]);
+    }, [user, messages]);
+
+    useEffect(() => {
+        const sendSocketMessage = (e) => {
+            console.log("Send message: " + message);
+            const data = {
+                message: message,
+                uid: user.id,
+                ouid: selectedFriendID,
+                fromMe: true,
+            };
+            socket.emit("send_message", { data: data });
+        };
+
+        sendSocketMessage();
+    }, []);
 
     useEffect(() => {
         socket.on("receive_message", (data) => {
@@ -105,18 +120,19 @@ export default function MainWindow({ convos, selectedFriendID }) {
             setMessage("");
         });
 
-        const sendSocketMessage = (e) => {
-            console.log("Send message: " + message);
-            const data = {
-                message: message,
-                uid: user.id,
-                ouid: selectedFriendID,
-                fromMe: true,
-            };
-            socket.emit("send_message", { data: data });
-        };
+        
+        // const sendSocketMessage = (e) => {
+        //     console.log("Send message: " + message);
+        //     const data = {
+        //         message: message,
+        //         uid: user.id,
+        //         ouid: selectedFriendID,
+        //         fromMe: true,
+        //     };
+        //     socket.emit("send_message", { data: data });
+        // };
 
-        sendSocketMessage();
+        // sendSocketMessage();
     };
 
     return (
