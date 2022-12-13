@@ -64,7 +64,7 @@ export default function MainWindow({ convos, selectedFriendID }) {
                     placeholder="Type something..."
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                    className="flex-grow bg-bg3 p-2 px-3 rounded-full mr-3 text-text-grey2 focus:border-transparent 
+                    className="flex-grow bg-bg3 p-2 px-[1rem] rounded-full mr-3 text-text-grey2 focus:border-transparent 
                         placeholder-text-grey focus:outline-none"
                 ></input>
                 <div
