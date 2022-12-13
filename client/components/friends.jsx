@@ -7,28 +7,26 @@ import UserContext from "../context/UserContext";
 import axios from "axios";
 
 function Friend({ friend, setSelectedID, curr }) {
-    const socket = useContext(SocketContext)
-    const user = useContext(UserContext)
+    const socket = useContext(SocketContext);
+    const user = useContext(UserContext);
     // const c = ` ${
     //     curr ? "bg-send-blue text-black" : " hover:bg-soft-red cursor-pointer"
     // } p-5 text-left w-full rounded-lg`;
-    friend = friend[0]
+    friend = friend[0];
     console.log(friend);
 
-    const c = ` ${ 
+    const c = ` ${
         curr ? "bg-soft-red text-black" : " cursor-pointer"
     } p-5 text-left rounded-lg`;
     return (
         <div
             className={c + " flex justify-start items-center w-full"}
             onClick={() => {
-                
-                setSelectedID(friend.id)
-                socket.emit('join', {
+                setSelectedID(friend.id);
+                socket.emit("join", {
                     uid: user.id,
-                    ouid: friend.id
-                })
-            
+                    ouid: friend.id,
+                });
             }}
         >
             <FontAwesomeIcon icon={faUser} className="text-2xl mr-5" />
@@ -37,8 +35,8 @@ function Friend({ friend, setSelectedID, curr }) {
     );
 }
 
-export default function Friends({selectedID, setSelectedID}) {
-    const socket = useContext(SocketContext)
+export default function Friends({ selectedID, setSelectedID, query }) {
+    const socket = useContext(SocketContext);
     //use global context
     const user = useContext(UserContext);
     const [no_friends, setNoFriends] = useState(true);
@@ -52,42 +50,41 @@ export default function Friends({selectedID, setSelectedID}) {
     // ];
 
     useEffect(() => {
-        console.log(user.id)
-        const getFriends = async () =>{
-            const res = await fetch('/api/get_friends', {
+        console.log(user.id);
+        const getFriends = async () => {
+            const res = await fetch("/api/get_friends", {
                 method: "POST",
-                body: JSON.stringify({id: user.id})
-            })
+                body: JSON.stringify({ id: user.id }),
+            });
             const body = res.json();
-            console.log(body)
-            return body
-        }
+            console.log(body);
+            return body;
+        };
 
+        getFriends()
+            .then((res) => {
+                console.log(res.data);
+                let farr = res.data;
+                console.log(farr);
+                user.setFriends(farr);
+                if (farr.length == 0) {
+                    setNoFriends(true);
+                }
+            })
+            .catch((err) => console.log(err));
+    }, [user.id]);
 
-        getFriends().then(res =>{
+    const getFriends = async () => {
+        let username = localStorage.getItem("username");
+        const friendResponse = axios.post(
+            "http://localhost:5001/users/get_friends",
+            { username }
+        );
+        console.log(friendResponse);
+    };
 
-            console.log(res.data)
-            let farr = res.data
-            console.log(farr)
-            user.setFriends(farr)
-            if(farr.length == 0) {
-                setNoFriends(true)
-            }
-
-        })
-        .catch(err => console.log(err));
-        
-    },[user.id])
-
-    const getFriends = async () =>{
-        let username = localStorage.getItem("username")
-        const friendResponse = axios.post('http://localhost:5001/users/get_friends', {username})
-        console.log(friendResponse)
-      }
-  
-    
-//NISHAs
-/*
+    //NISHAs
+    /*
 export default function Friends({ selectedID, setSelectedID}, props) {
     const [friends, setFriends] = useState([]);
     const [no_friends, setNoFriends] = useState("");
@@ -114,36 +111,59 @@ export default function Friends({ selectedID, setSelectedID}, props) {
         }
         return temp_friends
         */
-        //END NISHA's
-    
+    //END NISHA's
+
+    const filterFriends = (friends) => {
+        if (query == "" || friends.length == 0) {
+            return friends;
+        }
+        console.log("COME ON");
+        console.log(friends);
+        return friends.filter((friend) => {
+            console.log(friend);
+            return friend[0].username
+                .toLowerCase()
+                .includes(query.toLowerCase());
+        });
+        // let newf = [];
+        // for (let friend of friends) {
+        //     console.log("THIS FRIEND");
+        //     console.log(friend);
+        //     console.log(friend.username);
+        //     if (friend.username.toLowerCase().includes(query.toLowerCase())) {
+        //         newf.push(friend);
+        //     }
+        // }
+        // return newf;
+    };
 
     return (
         <div className="flex-grow bg-bg2 flex flex-col items-center justify-start rounded-lg w-[250px]">
-            {user.friends && user.friends.map((friend) => (
-                <Friend
-//NASHs
+            {user.friends &&
+                filterFriends(user.friends).map((friend) => (
+                    <Friend
+                        //NASHs
 
-                    key={friend[0].id}
-                    friend={friend}
-                    setSelectedID={setSelectedID}
-                    curr={friend[0].id == selectedID}
+                        key={friend[0].id}
+                        friend={friend}
+                        setSelectedID={setSelectedID}
+                        curr={friend[0].id == selectedID}
 
-//NISHA
-/*
+                        //NISHA
+                        /*
                     key={friend._id}
                     friend={friend}
                     setSelectedID={setSelectedID}
                     curr={friend._id == selectedID}
 */
-//END NISHA
-                />
-            ))}
+                        //END NISHA
+                    />
+                ))}
             {no_friends && (
                 <p className="bg-soft-red text-white p-2 rounded-lg">
-                Add friends using the button below to start chatting!
+                    Add friends using the button below to start chatting!
                 </p>
             )}
-            
         </div>
     );
 }

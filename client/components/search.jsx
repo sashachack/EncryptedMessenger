@@ -2,8 +2,7 @@ import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 
-export default function Search() {
-    const [query, setQuery] = useState("");
+export default function Search({ query, setQuery }) {
     return (
         <div className="bg-bg2 text-text-grey flex items-center justify-start p-2 pl-3 rounded-lg">
             <FontAwesomeIcon
