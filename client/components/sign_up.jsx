@@ -7,6 +7,7 @@ import {
     asymm_encrypt,
     genKeyPair,
     hashPassword,
+    symm_decrypt,
     symm_encrypt,
 } from "../functions/encryption";
 
@@ -20,79 +21,52 @@ export default function SignUp({ setLogin, setSucc }, props) {
     const [password, setPassword] = useState("");
     const [first, setFirst] = useState("");
     const [last, setLast] = useState("");
-    const context = useContext(UserContext);
+    const userContext = useContext(UserContext);
     // const { setUserData } = useContext(UserContext);
     // const history = useHistory();
 
     const submit = async (e) => {
         e.preventDefault();
 
-        try {
-            let { puk, pik } = await genKeyPair();
-            // console.log(puk);
-            // console.log(pik);
+        let { puk, pik } = await genKeyPair();
+        userContext.setUserPuk(puk);
+        userContext.setUserPik(pik);
 
-            // TESTING
-            const message = "This is a test message";
-            console.log(message);
-            const encrypted = await asymm_encrypt(message, puk);
-            console.log(encrypted);
-            const decrypted = await asymm_decrypt(encrypted, pik);
-            console.log(decrypted);
-            //
+        const { hashword, remKey } = await hashPassword(password);
+        pik = await symm_encrypt(pik, remKey);
 
-            const { hashword, remKey } = await hashPassword(password);
-            pik = await symm_encrypt(pik, remKey);
+        const newUser = {
+            first,
+            last,
+            email,
+            username,
+            hashword,
+            puk,
+            pik,
+        };
+        console.log(newUser);
+        const signUp = await axios.post(
+            "http://localhost:5001/users/signup",
+            newUser
+        );
 
-            const newUser = {
-                first,
-                last,
-                email,
-                username,
-                hashword,
-                puk,
-                pik,
-            };
-            console.log(newUser);
-            //}); */
+        console.log(signUp);
 
-            const signUp = await axios.post(
-                "http://localhost:5001/users/signup",
-                newUser
-            );
+        const loginResponse = await axios.post(
+            "http://localhost:5001/users/login",
+            { username, hashword }
+        );
+        localStorage.setItem("auth-token", loginResponse.data.token);
+        localStorage.setItem("first-name", signUp.data.firstName);
+        localStorage.setItem("last-name", signUp.data.lastName);
+        localStorage.setItem("email", signUp.data.email);
+        localStorage.setItem("password", signUp.data.password);
+        localStorage.setItem("username", signUp.data.username);
+        localStorage.setItem("friends", loginResponse.data.friends);
+        localStorage.setItem("blocked", loginResponse.data.blocked);
 
-            console.log(signUp);
-
-            const loginResponse = await axios.post(
-                "http://localhost:5001/users/login",
-                { username, hashword }
-            );
-
-            // setUserData({
-            //     token: loginResponse.data.token,
-            //     user: loginResponse.data.user,
-            //     first: signUp.data.first,
-            //     last: signUp.data.last,
-            //     email: signUp.data.email,
-            //     password: signUp.data.password,
-            // });
-
-            localStorage.setItem("auth-token", loginResponse.data.token);
-            localStorage.setItem("first-name", signUp.data.firstName);
-            localStorage.setItem("last-name", signUp.data.lastName);
-            localStorage.setItem("email", signUp.data.email);
-            localStorage.setItem("password", signUp.data.password);
-            localStorage.setItem("username", signUp.data.username);
-            localStorage.setItem("friends", loginResponse.data.friends);
-            localStorage.setItem("blocked", loginResponse.data.blocked);
-            // history.push("/");
-
-            setLogin(false);
-            setSucc(true);
-        } catch (e) {
-            // document.getElementById("signup-error").innerText = e.response.data.msg
-            console.log(e);
-        }
+        setLogin(false);
+        setSucc(true);
     };
 
     return (

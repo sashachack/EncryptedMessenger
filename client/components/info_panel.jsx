@@ -18,7 +18,6 @@ export default function InfoPanel() {
             <button className="bg-soft-red text-white p-2 rounded-lg">
                 Block User
             </button>
-            {/* <Switch label="Save Messages" on={saveOn} setOn={setSaveOn} /> */}
         </div>
     );
 }

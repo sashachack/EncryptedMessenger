@@ -6,7 +6,7 @@ import SettingsButton from "../components/settings_button";
 import Login from "../components/login";
 import SignUp from "../components/sign_up";
 import Popup from "../components/popup";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { friends } from "../constants/friends";
 import { convos } from "../constants/convos";
 import AddFriend from "../components/add_friend";
@@ -15,7 +15,8 @@ import UserContext from "../context/UserContext";
 import FriendModal from "../components/friend_modal";
 
 export default function Home() {
-    const [selectedFriendID, setSelectedFriendID] = useState(100);
+    const [selectedFriendID, setSelectedFriendID] = useState(-1);
+    const [selectedFriendPuk, setSelectedFriendPuk] = useState(null);
     const [login, setLogin] = useState(true);
     const [success, setSucc] = useState(false);
 
@@ -50,6 +51,22 @@ export default function Home() {
         password: undefined,
     });
 
+    useEffect(() => {
+        const action = async () => {
+            const otherPuk = await fetch("/api/get_puk", {
+                method: "POST",
+                body: JSON.stringify({ id: selectedFriendID }),
+            });
+            const body = otherPuk.json();
+            return body;
+        };
+
+        action().then((res) => {
+            console.log(res);
+            setSelectedFriendPuk(res.data);
+        });
+    }, [selectedFriendID]);
+
     return (
         <div className="bg-dark1 h-screen gap-6 p-6 flex justify-between">
             <UserContext.Provider value={user}>
@@ -75,6 +92,8 @@ export default function Home() {
                 <MainWindow
                     convos={convos}
                     selectedFriendID={selectedFriendID}
+                    selectedFriendPuk={selectedFriendPuk}
+                    setSelectedFriendPuk={setSelectedFriendPuk}
                 />
                 {friendModal && (
                     <FriendModal

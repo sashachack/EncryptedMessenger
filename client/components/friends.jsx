@@ -9,9 +9,6 @@ import axios from "axios";
 function Friend({ friend, setSelectedID, curr }) {
     const socket = useContext(SocketContext);
     const user = useContext(UserContext);
-    // const c = ` ${
-    //     curr ? "bg-send-blue text-black" : " hover:bg-soft-red cursor-pointer"
-    // } p-5 text-left w-full rounded-lg`;
     friend = friend[0];
     console.log(friend);
 
@@ -40,14 +37,6 @@ export default function Friends({ selectedID, setSelectedID, query }) {
     //use global context
     const user = useContext(UserContext);
     const [no_friends, setNoFriends] = useState(true);
-    // current_friend = current_friend || "Nash Solon";
-    // const friends = [
-    //     "Nash Solon",
-    //     "Nisha Sahgal",
-    //     "Kyle Montgomery",
-    //     "Carson Brown",
-    //     "Michael Schlaurbaum",
-    // ];
 
     useEffect(() => {
         console.log(user.id);
@@ -61,60 +50,20 @@ export default function Friends({ selectedID, setSelectedID, query }) {
             return body;
         };
 
-        getFriends()
-            .then((res) => {
-                console.log(res.data);
-                let farr = res.data;
-                console.log(farr);
-                user.setFriends(farr);
-                if (farr.length == 0) {
-                    setNoFriends(true);
-                } else {
-                    setNoFriends(false);
-                    setSelectedID(farr[0][0].id);
-                }
-            })
-            .catch((err) => console.log(err));
+        const action = async () => {
+            const res = await getFriends();
+            console.log(res.data);
+            let farr = res.data;
+            console.log(farr);
+            user.setFriends(farr);
+            if (farr.length == 0) {
+                setNoFriends(true);
+            } else {
+                setNoFriends(false);
+            }
+        };
+        action();
     }, [user.id]);
-
-    // const getFriends = async () => {
-    //     let username = localStorage.getItem("username");
-    //     const friendResponse = axios.post(
-    //         "http://localhost:5001/users/get_friends",
-    //         { username }
-    //     );
-    //     console.log(friendResponse);
-    // };
-
-    //NISHAs
-    /*
-export default function Friends({ selectedID, setSelectedID}, props) {
-    const [friends, setFriends] = useState([]);
-    const [no_friends, setNoFriends] = useState("");
-
-    useEffect(() => {
-        getFriends()
-        .catch(err => console.log(err));
-      },[])
-    
-      const getFriends = async () =>{
-        let username = localStorage.getItem("username")
-        const friendResponse = await axios.post('http://localhost:5001/users/get_friends', {username})
-        let temp_friends = []
-        for(let i = 0; i < friendResponse.data.length; i++) {
-            temp_friends.push(friendResponse.data[i])
-        }
-        setFriends(temp_friends)
-
-        if(temp_friends.length == 0) {
-            setNoFriends(true)
-        }
-        else{
-            setNoFriends(false)
-        }
-        return temp_friends
-        */
-    //END NISHA's
 
     const filterFriends = (friends) => {
         if (query == "" || friends.length == 0) {
@@ -128,16 +77,6 @@ export default function Friends({ selectedID, setSelectedID}, props) {
                 .toLowerCase()
                 .includes(query.toLowerCase());
         });
-        // let newf = [];
-        // for (let friend of friends) {
-        //     console.log("THIS FRIEND");
-        //     console.log(friend);
-        //     console.log(friend.username);
-        //     if (friend.username.toLowerCase().includes(query.toLowerCase())) {
-        //         newf.push(friend);
-        //     }
-        // }
-        // return newf;
     };
 
     return (
@@ -145,21 +84,10 @@ export default function Friends({ selectedID, setSelectedID}, props) {
             {user.friends &&
                 filterFriends(user.friends).map((friend) => (
                     <Friend
-                        //NASHs
-
                         key={friend[0].id}
                         friend={friend}
                         setSelectedID={setSelectedID}
                         curr={friend[0].id == selectedID}
-
-                        //NISHA
-                        /*
-                    key={friend._id}
-                    friend={friend}
-                    setSelectedID={setSelectedID}
-                    curr={friend._id == selectedID}
-*/
-                        //END NISHA
                     />
                 ))}
             {no_friends && (

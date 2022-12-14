@@ -68,10 +68,13 @@ export const asymm_encrypt = async(message, public_key) => {
     const ciphertext = await window.crypto.subtle.encrypt({ name: "RSA-OAEP" },
         key, new TextEncoder().encode(message)
     )
-    return ciphertext;
+    return buffToString(ciphertext);
 }
 
 export const asymm_decrypt = async(ciphertext, private_key) => {
+    console.log('CIPHERTEXT')
+    console.log(ciphertext)
+    ciphertext = stringToBuff(ciphertext);
     private_key = JSON.parse(private_key)
     const key = await window.crypto.subtle.importKey("jwk", private_key, {
             name: "RSA-OAEP",
@@ -83,32 +86,3 @@ export const asymm_decrypt = async(ciphertext, private_key) => {
     )
     return new TextDecoder().decode(decrypted);
 }
-
-// GPT 3
-// const keyPair = await window.crypto.subtle.generateKey(
-//   {
-//     name: "RSA-OAEP",
-//     modulusLength: 2048,
-//     publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
-//     hash: "SHA-256"
-//   },
-//   true,
-//   ["encrypt", "decrypt"]
-// );
-
-// const exportedPublicKey = await window.crypto.subtle.exportKey(
-//   "jwk",
-//   keyPair.publicKey
-// );
-// const exportedPrivateKey = await window.crypto.subtle.exportKey(
-//   "jwk",
-//   keyPair.privateKey
-// );
-// const importedPublicKey = await window.crypto.subtle.importKey(
-//     "jwk",
-//     exportedPublicKey, {
-//         name: "RSA-OAEP",
-//         hash: "SHA-256"
-//     },
-//     true, ["encrypt"]
-// );
