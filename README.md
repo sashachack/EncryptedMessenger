@@ -28,6 +28,12 @@ https://docs.google.com/document/d/18Li7F0x1O2Ma4YN1CArGzslTvCvX7SwXIZuyzD2mMGc/
 1. We were unable to fully implement the project, due to some other issues we ran into late in the process.
 2. One such issue was with our encryption mechanism. Specifically, a user is unable to decrypt messages they send since these messages are encrypted by their friend's public key.
 3. However, the main asymmetric encryption functions, found in `./client/functions/encryption.js` work without issue, and properly encrypt/decrypt messages and hash passwords. As using asymmetric encryption in a web-based application was the main focus of this project, we consider this facet to be a success.
+4. If you have trouble reproducing results with a new users, go ahead and use our logins:
+Username: sasha
+Password: sasha
+
+Username: nash
+Password: nasha
 
 ## Video Demonstration
 Here is a simple video demonstration of this project being run locally: 
