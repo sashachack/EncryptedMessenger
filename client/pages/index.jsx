@@ -22,7 +22,20 @@ export default function Home() {
     const [id, setId] = useState("");
     const [username, setUsername] = useState("");
     const [friends, setFriends] = useState(null);
-    const user = { id, setId, username, setUsername, friends, setFriends };
+    const [userPuk, setUserPuk] = useState(null);
+    const [userPik, setUserPik] = useState(null);
+    const user = {
+        id,
+        setId,
+        username,
+        setUsername,
+        friends,
+        setFriends,
+        userPuk,
+        setUserPuk,
+        userPik,
+        setUserPik,
+    };
 
     const [friendModal, setFriendModal] = useState(false);
 
