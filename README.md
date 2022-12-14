@@ -1,6 +1,6 @@
 # Encrypted Messenger
 
-Sasha Chackalackal (475454), Nash Solon (477477), Nisha Sahgal ()
+Sasha Chackalackal (475454), Nash Solon (477477), Nisha Sahgal (472818)
 
 ## Setup Instructions
 
