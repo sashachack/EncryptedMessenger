@@ -99,9 +99,9 @@ export default function MainWindow({
         }
 
         const sendSocketMessage = (e) => {
-            console.log("Send message: " + message);
+            console.log("Encryped message sent");
             const data = {
-                message: message,
+                message: "Hidden message",
                 uid: user.id,
                 ouid: selectedFriendID,
                 fromMe: true,
