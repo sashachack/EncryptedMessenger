@@ -6,7 +6,7 @@ import { localServer } from "../constants/domains";
 import UserContext from "../context/UserContext";
 // import {SignUp} from "./sign_up";
 import axios from "axios";
-import { symm_decrypt, hashPassword, symm_encrypt } from "../functions/encryption";
+import { symm_decrypt, hashPassword, symm_encrypt, genKeyPair } from "../functions/encryption";
 // import { friends } from "../constants/friends";
 
 // import {SignUp} from "./sign_up";
@@ -82,17 +82,16 @@ export default function Login({ setLogin, setSucc }, props) {
             localStorage.setItem("password", loginResponse.data.user.password);
             localStorage.setItem("friends", friendResponse.data);
             localStorage.setItem("blocked", loginResponse.data.blocked);
-            user.setPuk(loginResponse.data.publicKey)
+            user.setUserPuk(loginResponse.data.publicKey)
             
             pik = await symm_decrypt(pik, remKey);
-            user.setPik(pik);
+            user.setUserPik(pik);
 
             user.setId(loginResponse.data.user.id);
-            // history.push("/");
 
             setSucc(true);
-            socket.emit("send_name", { name: username });
         } catch (e) {
+            console.log(e)
             document.getElementById("login-error").innerText =
                 e.response.data.msg;
         }
