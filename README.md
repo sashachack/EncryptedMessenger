@@ -41,6 +41,7 @@ Finally, we were also able to encrypt and decrypt messages using the asymmestric
 3. However, the main asymmetric encryption functions, found in `./client/functions/encryption.js` work without issue, and properly encrypt/decrypt messages and hash passwords. As using asymmetric encryption in a web-based application was the main focus of this project, we consider this facet to be a success.
 4. Given more time, we would likely have encrypted messages depending on if they belonged to the receipient or the sender. Since the sender has access to their own public/private key, we would need to implement a more complex encryption scheme. However, we do have some infrastructure that could make this possible.
 5. If you have trouble reproducing results with a new users, go ahead and use our logins:
+
 Username: sasha
 Password: sasha
 
