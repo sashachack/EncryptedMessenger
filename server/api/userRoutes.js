@@ -98,6 +98,8 @@ router.post("/login", async(req, res) => {
                 email: user.email,
                 friends: user.friends,
                 blocked: user.blocked,
+                publicKey: user.publicKey,
+                privateKey: user.privateKey,
                 id: user.id
             }
         })
