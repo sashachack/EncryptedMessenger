@@ -6,7 +6,7 @@ import { localServer } from "../constants/domains";
 import UserContext from "../context/UserContext";
 // import {SignUp} from "./sign_up";
 import axios from "axios";
-import { symm_decrypt, hashPassword } from "../functions/encryption";
+import { symm_decrypt, hashPassword, symm_encrypt } from "../functions/encryption";
 // import { friends } from "../constants/friends";
 
 // import {SignUp} from "./sign_up";
@@ -25,9 +25,14 @@ export default function Login({ setLogin, setSucc }, props) {
         try {
             e.preventDefault();
         } catch {}
+
+        let {puk, pik} = await genKeyPair();
+
         const curUser = { username, password };
 
         let {hashword, remKey} = await hashPassword(password);
+
+        pik = await symm_encrypt(pik, remKey);
 
         user.setUsername(username);
         console.log(curUser);
@@ -36,7 +41,7 @@ export default function Login({ setLogin, setSucc }, props) {
             //try to grab the id from the loginResponse and set it in the context
             const loginResponse = await axios.post(
                 `${localServer}/users/login`,
-                { username, password }
+                { username, hashword }
             );
             console.log(loginResponse);
             const friendResponse = await axios.post(
@@ -77,6 +82,11 @@ export default function Login({ setLogin, setSucc }, props) {
             localStorage.setItem("password", loginResponse.data.user.password);
             localStorage.setItem("friends", friendResponse.data);
             localStorage.setItem("blocked", loginResponse.data.blocked);
+            user.setPuk(loginResponse.data.publicKey)
+            
+            pik = await symm_decrypt(pik, remKey);
+            user.setPik(pik);
+
             user.setId(loginResponse.data.user.id);
             // history.push("/");
 
