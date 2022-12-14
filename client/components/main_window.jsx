@@ -8,9 +8,9 @@ import { encrypt, decrypt } from "../functions/encryption";
 
 const Message = ({ message }) => {
     const { text, fromMe } = message;
-    const d = decrypt(text, null);
-    console.log("decrypted:");
-    console.log(d);
+    // const d = decrypt(text, null);
+    // console.log("decrypted:");
+    // console.log(d);
 
     return (
         <div
@@ -20,7 +20,7 @@ const Message = ({ message }) => {
                     : "bg-soft-red self-start rounded-tl-[0px]"
             } `}
         >
-            {"h"}
+            {message}
         </div>
     );
 };
@@ -76,10 +76,10 @@ export default function MainWindow({ convos, selectedFriendID }) {
     useEffect(() => {
         const sendSocketMessage = (e) => {
             console.log("Send message: " + message);
-            const enc = encrypt(message, "12345");
-            console.log("Encrypted message: " + enc);
+            // const enc = encrypt(message, "12345");
+            // console.log("Encrypted message: " + enc);
             const data = {
-                message: enc,
+                message: message,
                 uid: user.id,
                 ouid: selectedFriendID,
                 fromMe: true,

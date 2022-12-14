@@ -90,7 +90,7 @@ export default function Home() {
                     />
                 )}
 
-                <InfoPanel />
+                {/* <InfoPanel /> */}
             </UserContext.Provider>
         </div>
     );

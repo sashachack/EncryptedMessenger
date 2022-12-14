@@ -1,35 +1,40 @@
 import { useState, useContext } from "react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {generateKeyPair, publicEncrypt, privateDecrypt} from 'crypto';
+// import { generateKeyPair, publicEncrypt, privateDecrypt } from "crypto";
+import {
+    genKeyPair,
+    hashPassword,
+    symm_encrypt,
+} from "../functions/encryption";
 
 import axios from "axios";
 import UserContext from "../context/UserContext";
-const bcrypt = require("bcryptjs");
-import CryptoJS from 'crypto-js';
+// const bcrypt = require("bcryptjs");
+import CryptoJS from "crypto-js";
 
-const genKeyPair = async (e) => {
-    const keyPair = await window.crypto.subtle.generateKey(
-      {
-        name: "ECDH",
-        namedCurve: "P-256",
-      },
-      true,
-      ["deriveKey", "deriveBits"]
-    );
-  
-    const publicKeyJwk = await window.crypto.subtle.exportKey(
-      "jwk",
-      keyPair.publicKey
-    );
-  
-    const privateKeyJwk = await window.crypto.subtle.exportKey(
-      "jwk",
-      keyPair.privateKey
-    );
-  
-    return { publicKeyJwk, privateKeyJwk };
-};
+// const genKeyPair = async (e) => {
+//     const keyPair = await window.crypto.subtle.generateKey(
+//         {
+//             name: "ECDH",
+//             namedCurve: "P-256",
+//         },
+//         true,
+//         ["deriveKey", "deriveBits"]
+//     );
+
+//     const publicKeyJwk = await window.crypto.subtle.exportKey(
+//         "jwk",
+//         keyPair.publicKey
+//     );
+
+//     const privateKeyJwk = await window.crypto.subtle.exportKey(
+//         "jwk",
+//         keyPair.privateKey
+//     );
+
+//     return { publicKeyJwk, privateKeyJwk };
+// };
 
 export default function SignUp({ setLogin, setSucc }, props) {
     const [loading, setLoading] = useState(false);
@@ -38,71 +43,54 @@ export default function SignUp({ setLogin, setSucc }, props) {
     const [password, setPassword] = useState("");
     const [first, setFirst] = useState("");
     const [last, setLast] = useState("");
-    // const {setUserData} = useContext(UserContext);
+    // const { setUserData } = useContext(UserContext);
     // const history = useHistory();
 
-    const submit = async (e) => { 
+    const submit = async (e) => {
         e.preventDefault();
 
         try {
-            generateKeyPair('rsa', {
-                modulusLength: 2048,
-                publicKeyEncoding: {
-                    type: 'spki',
-                    format: 'pem'
-                },
-                privateKeyEncoding: {
-                    type: 'pkcs8',
-                    format: 'pem'
-                }
-            }, (err, publicKey, privateKey) => {
-                if(err) {
-                    console.log(err)
-                }
-                else {
-                    console.log(publicKey)
-                    console.log(privateKey)
-                }
-            })
+            let { puk, pik } = await genKeyPair();
+            console.log(puk);
+            console.log(pik);
 
-            genKeyPair().then((keys) => {
-            
-                console.log(keys)
-                let public_key = keys['publicKeyJwk']
-                let private_key = keys['privateKeyJwk']
+            const { hashword, remKey } = await hashPassword(password);
 
-                bcrypt.genSalt().then((salt) => {
-                    bcrypt.hash(password, salt).then((passHash) => {
-                        let pass_db = passHash.substring(0,)
-                        let key = passHash.substring(24, 40)
-                        let private_key_enc = window.crypto.subtle.encrypt(
-                            {
-                              name: "AES-CTR",
-                              length: 64
-                            },
-                            key,
-                            passHash
-                          );
-                        console.log(private_key_enc)
-                    })
-                })
-                
-                const newUser = {first, last, email, username, password, public_key, private_key};
-                console.log(newUser)
-            });
+            pik = await symm_encrypt(pik, remKey);
 
-            // const signUp = await axios.post("http://localhost:5001/users/signup", newUser)
-            // const loginResponse = await axios.post("http://localhost:5001/users/login", {username, password});
+            const newUser = {
+                first,
+                last,
+                email,
+                username,
+                hashword,
+                puk,
+                pik,
+            };
+            console.log(newUser);
+            //}); */
 
-            // setUserData({ 
+            const signUp = await axios.post(
+                "http://localhost:5001/users/signup",
+                newUser
+            );
+
+            console.log(signUp);
+
+            const loginResponse = await axios.post(
+                "http://localhost:5001/users/login",
+                { username, hashword }
+            );
+
+            // setUserData({
             //     token: loginResponse.data.token,
             //     user: loginResponse.data.user,
             //     first: signUp.data.first,
             //     last: signUp.data.last,
             //     email: signUp.data.email,
-            //     password: signUp.data.password
+            //     password: signUp.data.password,
             // });
-    
+
             localStorage.setItem("auth-token", loginResponse.data.token);
             localStorage.setItem("first-name", signUp.data.firstName);
             localStorage.setItem("last-name", signUp.data.lastName);
@@ -112,26 +100,26 @@ export default function SignUp({ setLogin, setSucc }, props) {
             localStorage.setItem("friends", loginResponse.data.friends);
             localStorage.setItem("blocked", loginResponse.data.blocked);
             // history.push("/");
-    
+
             setLogin(false);
             setSucc(true);
-
-        } catch (e){
+        } catch (e) {
             // document.getElementById("signup-error").innerText = e.response.data.msg
-            console.log(e)
+            console.log(e);
         }
-    }
+    };
 
     return (
-        <div className = "backdrop-blur-md inset-0 h-screen absolute w-screen flex justify-center m-auto items-center">
+        <div className="backdrop-blur-md inset-0 h-screen absolute w-screen flex justify-center m-auto items-center">
             <div className="gap-4 p-10 bg-bg3 rounded-lg flex flex-col justify-center items-center">
-                <div className = "h-full w-full justify-start">
-                    <FontAwesomeIcon className="text-white cursor-pointer" icon={faArrowLeft}
-                    onClick = {(e) => setLogin(true)}/>    
+                <div className="h-full w-full justify-start">
+                    <FontAwesomeIcon
+                        className="text-white cursor-pointer"
+                        icon={faArrowLeft}
+                        onClick={(e) => setLogin(true)}
+                    />
                 </div>
-                <div id="signup-error">
-
-                </div>
+                <div id="signup-error"></div>
                 <input
                     type="text"
                     value={first}
@@ -173,11 +161,15 @@ export default function SignUp({ setLogin, setSucc }, props) {
                         placeholder-text-grey focus:outline-none"
                 ></input>
                 <form onSubmit={submit}>
-                <button type='submit' className="text-xl font-bold text-white p-2 rounded-lg" onClick={submit}>
-                    Sign Up
-                </button>
+                    <button
+                        type="submit"
+                        className="text-xl font-bold text-white p-2 rounded-lg"
+                        onClick={submit}
+                    >
+                        Sign Up
+                    </button>
                 </form>
-        </div>
+            </div>
         </div>
     );
 }
