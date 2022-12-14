@@ -1,9 +1,35 @@
 import { useState, useContext } from "react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {generateKeyPair, publicEncrypt, privateDecrypt} from 'crypto';
 
 import axios from "axios";
 import UserContext from "../context/UserContext";
+const bcrypt = require("bcryptjs");
+import CryptoJS from 'crypto-js';
+
+const genKeyPair = async (e) => {
+    const keyPair = await window.crypto.subtle.generateKey(
+      {
+        name: "ECDH",
+        namedCurve: "P-256",
+      },
+      true,
+      ["deriveKey", "deriveBits"]
+    );
+  
+    const publicKeyJwk = await window.crypto.subtle.exportKey(
+      "jwk",
+      keyPair.publicKey
+    );
+  
+    const privateKeyJwk = await window.crypto.subtle.exportKey(
+      "jwk",
+      keyPair.privateKey
+    );
+  
+    return { publicKeyJwk, privateKeyJwk };
+};
 
 export default function SignUp({ setLogin, setSucc }, props) {
     const [loading, setLoading] = useState(false);
@@ -17,12 +43,56 @@ export default function SignUp({ setLogin, setSucc }, props) {
 
     const submit = async (e) => { 
         e.preventDefault();
-        const newUser = {first, last, email, username, password};
-        console.log(newUser)
 
         try {
-            const signUp = await axios.post("http://localhost:5001/users/signup", newUser)
-            const loginResponse = await axios.post("http://localhost:5001/users/login", {username, password});
+            generateKeyPair('rsa', {
+                modulusLength: 2048,
+                publicKeyEncoding: {
+                    type: 'spki',
+                    format: 'pem'
+                },
+                privateKeyEncoding: {
+                    type: 'pkcs8',
+                    format: 'pem'
+                }
+            }, (err, publicKey, privateKey) => {
+                if(err) {
+                    console.log(err)
+                }
+                else {
+                    console.log(publicKey)
+                    console.log(privateKey)
+                }
+            })
+
+            genKeyPair().then((keys) => {
+            
+                console.log(keys)
+                let public_key = keys['publicKeyJwk']
+                let private_key = keys['privateKeyJwk']
+
+                bcrypt.genSalt().then((salt) => {
+                    bcrypt.hash(password, salt).then((passHash) => {
+                        let pass_db = passHash.substring(0,)
+                        let key = passHash.substring(24, 40)
+                        let private_key_enc = window.crypto.subtle.encrypt(
+                            {
+                              name: "AES-CTR",
+                              length: 64
+                            },
+                            key,
+                            passHash
+                          );
+                        console.log(private_key_enc)
+                    })
+                })
+                
+                const newUser = {first, last, email, username, password, public_key, private_key};
+                console.log(newUser)
+            });
+
+            // const signUp = await axios.post("http://localhost:5001/users/signup", newUser)
+            // const loginResponse = await axios.post("http://localhost:5001/users/login", {username, password});
 
             // setUserData({ 
             //     token: loginResponse.data.token,
@@ -47,7 +117,8 @@ export default function SignUp({ setLogin, setSucc }, props) {
             setSucc(true);
 
         } catch (e){
-            document.getElementById("signup-error").innerText = e.response.data.msg
+            // document.getElementById("signup-error").innerText = e.response.data.msg
+            console.log(e)
         }
     }
 
