@@ -6,6 +6,7 @@ import { localServer } from "../constants/domains";
 import UserContext from "../context/UserContext";
 // import {SignUp} from "./sign_up";
 import axios from "axios";
+import { symm_decrypt, hashPassword } from "../functions/encryption";
 // import { friends } from "../constants/friends";
 
 // import {SignUp} from "./sign_up";
@@ -25,6 +26,9 @@ export default function Login({ setLogin, setSucc }, props) {
             e.preventDefault();
         } catch {}
         const curUser = { username, password };
+
+        let {hashword, remKey} = await hashPassword(password);
+
         user.setUsername(username);
         console.log(curUser);
         localStorage.setItem("username", curUser.username);
