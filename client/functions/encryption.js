@@ -1,69 +1,4 @@
 import CryptoJS from 'crypto-js';
-// import { generateKeyPair, publicEncrypt, privateDecrypt } from 'crypto';
-// const bcrypt = require("bcrypt");
-
-
-// const k = "5A7134743777217A24432646294A404E635266556A586E3272357538782F413F"
-// const iv = "635166546A576E5A7134743777217A25432A462D4A614E645267556B58703273"
-
-
-// export const encrypt = (message, key) => {
-//     key = k; // obviously not this
-//     // Encrypt the message using the key
-
-//     const ciphertext = CryptoJS.AES.encrypt(message, key, { iv: iv });
-
-//     // Return the ciphertext as a string
-//     return ciphertext.toString();
-//     // return "HIHFOWIEH OF";
-// }
-
-// export const decrypt = (ciphertext, key) => {
-//     key = k; // obviously not this
-//     // Decrypt the ciphertext using the key
-//     const bytes = CryptoJS.AES.decrypt(ciphertext, key, { iv: iv });
-
-//     // Return the original message
-//     return bytes.toString(CryptoJS.enc.Utf8);
-// }
-
-// export const genKeyPair = () => {
-//     // const { publicKey, privateKey }
-//     console.log('Reached genKeyPair')
-//     let puk = null;
-//     let pik = null;
-//     generateKeyPair('rsa', {
-//         modulusLength: 2048,
-//         publicKeyEncoding: {
-//             type: 'spki',
-//             format: 'pem'
-//         },
-//         privateKeyEncoding: {
-//             type: 'pkcs8',
-//             format: 'pem'
-//         }
-//     }, (err, publicKey, privateKey) => {
-//         if (err) {
-//             throw err;
-//         }
-
-//         // Print the public and private keys
-//         // console.log('Public Key: \n' + publicKey + '\n');
-//         // console.log('Private Key: \n' + privateKey + '\n');
-
-//         // Encrypt a message with the public key
-//         // const message = 'Hello World';
-//         // const encrypted = publicEncrypt(publicKey, Buffer.from(message));
-//         // console.log('Encrypted: \n' + encrypted.toString('base64') + '\n')
-
-//         // Decrypt the encrypted message with the private key
-//         // const decrypted = privateDecrypt(privateKey, encrypted);
-//         // console.log(decrypted.toString('utf8')); // "Hello World"
-//         puk = publicKey;
-//         pik = privateKey;
-//     });
-//     return { puk, pik };
-// }
 
 const buffToString = (buffer) => {
     return [...new Uint8Array(buffer)]
@@ -71,20 +6,29 @@ const buffToString = (buffer) => {
         .join('')
 }
 
+const stringToBuff = (str) => {
+    return new Uint8Array(str.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+}
+
 export const genKeyPair = async() => {
     console.log('Reached genKeyPair')
     let keyPair = await window.crypto.subtle.generateKey({
             name: "RSA-OAEP",
-            modulusLength: 4096,
+            modulusLength: 2048,
             publicExponent: new Uint8Array([1, 0, 1]),
             hash: "SHA-256"
         },
         true, ["encrypt", "decrypt"]
     );
-    let puk = await window.crypto.subtle.exportKey("spki", keyPair.publicKey);
-    let pik = await window.crypto.subtle.exportKey("pkcs8", keyPair.privateKey);
-    puk = buffToString(puk);
-    pik = buffToString(pik);
+    let puk = keyPair.publicKey; // await window.crypto.subtle.exportKey("jwk", keyPair.publicKey);
+    let pik = keyPair.privateKey; // await window.crypto.subtle.exportKey("jwk", keyPair.privateKey);
+
+    // console.log("Before 2string")
+    // console.log(puk)
+    // console.log(pik)
+    // console.log("After 2string")
+    // puk = buffToString(puk);
+    // pik = buffToString(pik);
     return { puk, pik };
 }
 
@@ -113,15 +57,55 @@ export const symm_decrypt = async(ciphertext, key) => {
 }
 
 export const asymm_encrypt = async(message, public_key) => {
-    const ciphertext = await widow.crypto.subtle.encrypt({ name: "RSA-OAEP" },
+    // const key = await window.crypto.subtle.importKey("jwk", public_key, {
+    //     name: "RSA-OAEP",
+    //     hash: "SHA-256"
+    // }, true, ["encrypt"])
+    const ciphertext = await window.crypto.subtle.encrypt({ name: "RSA-OAEP" },
         public_key, new TextEncoder().encode(message)
     )
-    return buffToString(ciphertext);
+    return ciphertext;
 }
 
 export const asymm_decrypt = async(ciphertext, private_key) => {
-    const decrypted = await widow.crypto.subtle.decrypt({ name: "RSA-OAEP" },
-        private_key, new TextEncoder().encode(ciphertext)
+    // console.log(private_key)
+    console.log('Reached asymm_decrypt')
+        // const key = await window.crypto.subtle.importKey("jwk", private_key, {
+        //     name: "RSA-OAEP",
+        //     hash: "SHA-256"
+        // }, true, ["decrypt"])
+        // console.log(key)
+    const decrypted = await window.crypto.subtle.decrypt({ name: "RSA-OAEP" },
+        private_key, ciphertext
     )
-    return decrypted;
+    return new TextDecoder().decode(decrypted);
 }
+
+// GPT 3
+// const keyPair = await window.crypto.subtle.generateKey(
+//   {
+//     name: "RSA-OAEP",
+//     modulusLength: 2048,
+//     publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
+//     hash: "SHA-256"
+//   },
+//   true,
+//   ["encrypt", "decrypt"]
+// );
+
+// const exportedPublicKey = await window.crypto.subtle.exportKey(
+//   "jwk",
+//   keyPair.publicKey
+// );
+// const exportedPrivateKey = await window.crypto.subtle.exportKey(
+//   "jwk",
+//   keyPair.privateKey
+// );
+// const importedPublicKey = await window.crypto.subtle.importKey(
+//     "jwk",
+//     exportedPublicKey, {
+//         name: "RSA-OAEP",
+//         hash: "SHA-256"
+//     },
+//     true, ["encrypt"]
+// );

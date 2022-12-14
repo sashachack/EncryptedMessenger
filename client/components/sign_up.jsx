@@ -3,6 +3,8 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { generateKeyPair, publicEncrypt, privateDecrypt } from "crypto";
 import {
+    asymm_decrypt,
+    asymm_encrypt,
     genKeyPair,
     hashPassword,
     symm_encrypt,
@@ -54,8 +56,16 @@ export default function SignUp({ setLogin, setSucc }, props) {
             console.log(puk);
             console.log(pik);
 
-            const { hashword, remKey } = await hashPassword(password);
+            // TESTING
+            const message = "This is a test message";
+            console.log(message);
+            const encrypted = await asymm_encrypt(message, puk);
+            console.log(encrypted);
+            const decrypted = await asymm_decrypt(encrypted, pik);
+            console.log(decrypted);
+            //
 
+            const { hashword, remKey } = await hashPassword(password);
             pik = await symm_encrypt(pik, remKey);
 
             const newUser = {
