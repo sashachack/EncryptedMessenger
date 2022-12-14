@@ -111,3 +111,17 @@ export const symm_decrypt = async(ciphertext, key) => {
     // Return the original message
     return bytes.toString(CryptoJS.enc.Utf8);
 }
+
+export const asymm_encrypt = async(message, public_key) => {
+    const ciphertext = await widow.crypto.subtle.encrypt({ name: "RSA-OAEP" },
+        public_key, new TextEncoder().encode(message)
+    )
+    return buffToString(ciphertext);
+}
+
+export const asymm_decrypt = async(ciphertext, private_key) => {
+    const decrypted = await widow.crypto.subtle.decrypt({ name: "RSA-OAEP" },
+        private_key, new TextEncoder().encode(ciphertext)
+    )
+    return decrypted;
+}
