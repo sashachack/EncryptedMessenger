@@ -12,31 +12,6 @@ import {
 
 import axios from "axios";
 import UserContext from "../context/UserContext";
-// const bcrypt = require("bcryptjs");
-import CryptoJS from "crypto-js";
-
-// const genKeyPair = async (e) => {
-//     const keyPair = await window.crypto.subtle.generateKey(
-//         {
-//             name: "ECDH",
-//             namedCurve: "P-256",
-//         },
-//         true,
-//         ["deriveKey", "deriveBits"]
-//     );
-
-//     const publicKeyJwk = await window.crypto.subtle.exportKey(
-//         "jwk",
-//         keyPair.publicKey
-//     );
-
-//     const privateKeyJwk = await window.crypto.subtle.exportKey(
-//         "jwk",
-//         keyPair.privateKey
-//     );
-
-//     return { publicKeyJwk, privateKeyJwk };
-// };
 
 export default function SignUp({ setLogin, setSucc }, props) {
     const [loading, setLoading] = useState(false);
