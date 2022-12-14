@@ -20,8 +20,11 @@ export const genKeyPair = async() => {
         },
         true, ["encrypt", "decrypt"]
     );
-    let puk = keyPair.publicKey; // await window.crypto.subtle.exportKey("jwk", keyPair.publicKey);
-    let pik = keyPair.privateKey; // await window.crypto.subtle.exportKey("jwk", keyPair.privateKey);
+    let puk = await window.crypto.subtle.exportKey("jwk", keyPair.publicKey);
+    let pik = await window.crypto.subtle.exportKey("jwk", keyPair.privateKey);
+
+    puk = JSON.stringify(puk);
+    pik = JSON.stringify(pik);
 
     // console.log("Before 2string")
     // console.log(puk)
@@ -57,26 +60,26 @@ export const symm_decrypt = async(ciphertext, key) => {
 }
 
 export const asymm_encrypt = async(message, public_key) => {
-    // const key = await window.crypto.subtle.importKey("jwk", public_key, {
-    //     name: "RSA-OAEP",
-    //     hash: "SHA-256"
-    // }, true, ["encrypt"])
+    public_key = JSON.parse(public_key)
+    const key = await window.crypto.subtle.importKey("jwk", public_key, {
+        name: "RSA-OAEP",
+        hash: "SHA-256"
+    }, true, ["encrypt"])
     const ciphertext = await window.crypto.subtle.encrypt({ name: "RSA-OAEP" },
-        public_key, new TextEncoder().encode(message)
+        key, new TextEncoder().encode(message)
     )
     return ciphertext;
 }
 
 export const asymm_decrypt = async(ciphertext, private_key) => {
-    // console.log(private_key)
-    console.log('Reached asymm_decrypt')
-        // const key = await window.crypto.subtle.importKey("jwk", private_key, {
-        //     name: "RSA-OAEP",
-        //     hash: "SHA-256"
-        // }, true, ["decrypt"])
+    private_key = JSON.parse(private_key)
+    const key = await window.crypto.subtle.importKey("jwk", private_key, {
+            name: "RSA-OAEP",
+            hash: "SHA-256"
+        }, true, ["decrypt"])
         // console.log(key)
     const decrypted = await window.crypto.subtle.decrypt({ name: "RSA-OAEP" },
-        private_key, ciphertext
+        key, ciphertext
     )
     return new TextDecoder().decode(decrypted);
 }

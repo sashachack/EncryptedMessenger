@@ -45,6 +45,7 @@ export default function SignUp({ setLogin, setSucc }, props) {
     const [password, setPassword] = useState("");
     const [first, setFirst] = useState("");
     const [last, setLast] = useState("");
+    const context = useContext(UserContext);
     // const { setUserData } = useContext(UserContext);
     // const history = useHistory();
 
@@ -53,8 +54,8 @@ export default function SignUp({ setLogin, setSucc }, props) {
 
         try {
             let { puk, pik } = await genKeyPair();
-            console.log(puk);
-            console.log(pik);
+            // console.log(puk);
+            // console.log(pik);
 
             // TESTING
             const message = "This is a test message";
