@@ -15,7 +15,6 @@ export default async(req, res) => {
     
         const user = await db.collection("users").find({id: bodyObject.id}).toArray();
         const f_objs = user[0].friends
-        console.log('here')
         const fids = []
 
         for(let i = 0; i < f_objs.length; i++){

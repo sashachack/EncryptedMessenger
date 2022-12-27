@@ -14,16 +14,20 @@ const Message = ({ message, friendPuk }) => {
     useEffect(() => {
         const decodeMessage = async () => {
             if (fromMe) {
-                setMsg(text);
+                console.log(fromMe)
+                const dec = await asymm_decrypt(text, user.userPik);
+                console.log(dec)
+                setMsg(dec);
             } else {
                 const dec = await asymm_decrypt(text, user.userPik);
+                console.log(dec)
                 setMsg(dec);
             }
         };
         decodeMessage();
     }, []);
 
-    if (!fromMe) {
+    // if (!fromMe) {
         return (
             <div
                 className={`max-w-[600px] break-words p-2 rounded-xl ${
@@ -35,13 +39,12 @@ const Message = ({ message, friendPuk }) => {
                 {msg}
             </div>
         );
-    }
+    // }
 };
 
 const Messages = ({ messages, friendPuk }) => {
     return (
         <div
-            // ref={ref}
             className="flex flex-col h-full w-full gap-4 overflow-y-scroll no-scrollbar pb-4 py-2"
         >
             {messages &&
@@ -72,12 +75,11 @@ export default function MainWindow({
             });
 
             const body = res.json();
-            console.log(body);
+            // console.log(body);
             return body;
         };
 
         grabMessages().then((res) => {
-            console.log(res.data);
             let marr = res.data;
             setMessages(marr);
         });
@@ -91,13 +93,15 @@ export default function MainWindow({
         socket.on("receive_message", (data) => {
             messageGrabbing();
         });
-    }, []);
+    }, [messages]);
 
     let send = async () => {
         if (message == "") {
             return;
         }
 
+        console.log(message)
+        
         const sendSocketMessage = (e) => {
             console.log("Encryped message sent");
             const data = {
@@ -117,21 +121,24 @@ export default function MainWindow({
                 console.log("No friend puk");
                 return;
             }
-            console.log(message);
+            // console.log(message);
             const encrypted = await asymm_encrypt(message, selectedFriendPuk);
-            console.log(encrypted);
+            const user_encrypted = await asymm_encrypt(message, user.userPuk)
+            console.log(user_encrypted);
 
             let data = {
                 uid: user.id,
                 ouid: selectedFriendID,
                 message: encrypted,
+                user_message: user_encrypted
             };
-            console.log("payload;");
-            console.log(data);
+            // console.log("payload;");
+            // console.log(data);
             const res = await fetch("/api/send_message", {
                 method: "POST",
                 body: JSON.stringify(data),
             });
+
             const body = res.json();
             console.log("BODY:");
             console.log(body);
@@ -139,13 +146,16 @@ export default function MainWindow({
         };
 
         let res = await sendDBMessage();
-        console.log(res);
-        console.log(res.data);
         let marr = res.data;
-        console.log(marr);
         setMessages(marr);
         setMessage("");
+        // return (
+        //     <div className={`max-w-[600px] break-words p-2 rounded-xl "bg-send-blue self-end rounded-tr-[0px]"`}>
+        //         {message}
+        //     </div>
+        // );
     };
+
     if (selectedFriendID == -1) return <div></div>;
     else {
         return (

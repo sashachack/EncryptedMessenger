@@ -8,7 +8,8 @@ const userSchema = new mongoose.Schema({
     password: { type: String, require: true, minlength: 5 },
     friends: [{
         username: String,
-        id: Number
+        id: Number,
+        pending: Boolean
     }],
     blocked: [{
         username: String

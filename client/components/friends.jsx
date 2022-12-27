@@ -10,7 +10,6 @@ function Friend({ friend, setSelectedID, curr }) {
     const socket = useContext(SocketContext);
     const user = useContext(UserContext);
     friend = friend[0];
-    console.log(friend);
 
     const c = ` ${
         curr ? "bg-soft-red text-black" : " cursor-pointer"
@@ -39,22 +38,19 @@ export default function Friends({ selectedID, setSelectedID, query }) {
     const [no_friends, setNoFriends] = useState(true);
 
     useEffect(() => {
-        console.log(user.id);
+        // console.log(user.id);
         const getFriends = async () => {
             const res = await fetch("/api/get_friends", {
                 method: "POST",
                 body: JSON.stringify({ id: user.id }),
             });
             const body = res.json();
-            console.log(body);
             return body;
         };
 
         const action = async () => {
             const res = await getFriends();
-            console.log(res.data);
             let farr = res.data;
-            console.log(farr);
             user.setFriends(farr);
             if (farr.length == 0) {
                 setNoFriends(true);
@@ -63,16 +59,13 @@ export default function Friends({ selectedID, setSelectedID, query }) {
             }
         };
         action();
-    }, [user.id]);
+    }, [user.friends]);
 
     const filterFriends = (friends) => {
         if (query == "" || friends.length == 0) {
             return friends;
         }
-        console.log("COME ON");
-        console.log(friends);
         return friends.filter((friend) => {
-            console.log(friend);
             return friend[0].username
                 .toLowerCase()
                 .includes(query.toLowerCase());

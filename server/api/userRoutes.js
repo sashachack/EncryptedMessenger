@@ -184,14 +184,20 @@ router.post("/add_friend", async(req, res) => {
         console.log(friend_username)
 
         const filter = { username: username };
-        const update = { $push: { friends: { username: friend_username, id: ouid } } };
+        const update = { $push: { friends: { username: friend_username, id: ouid} } };
+        // const friend_update = { $push: { friends: { username: username, id: uid } } };
         console.log(update)
 
         const user = await User.findOne({ username: username });
+        // const friend = await User.findOne({ username: friend_username });
 
         let new_user = await User.updateOne({ _id: user._id },
             update
         )
+
+        // let new_friend = await User.updateOne({ _id: friend._id },
+        //     friend_update
+        // )
 
         const final_user = await User.findOne({ username: username });
 
@@ -202,8 +208,6 @@ router.post("/add_friend", async(req, res) => {
         let new_message = await Messages.updateOne({ uid: uid },
             update_convos
         )
-
-
 
         res.json(final_user)
 

@@ -62,7 +62,6 @@ export default function Home() {
         };
 
         action().then((res) => {
-            console.log(res);
             setSelectedFriendPuk(res.data);
         });
     }, [selectedFriendID]);

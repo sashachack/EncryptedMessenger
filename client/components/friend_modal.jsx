@@ -57,7 +57,6 @@ export default function FriendModal(
                 getUsers.data[i].username != username
             ) {
                 temp_options.push(getUsers.data[i]);
-                console.log(getUsers.data[i]);
             }
         }
 
@@ -96,6 +95,7 @@ export default function FriendModal(
         );
         const ouid = new_friend.data[0].id;
         const uid = user.id;
+        const pending = true
         const friend_username = new_friend.data[0].username;
         if (current_friends.includes(friend_username)) {
             document.getElementById("friend-error").innerText =
